@@ -1,0 +1,209 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  html, body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #dbe3f1;
+  }
+  
+  /* TOP BRAND BAR */
+  .top-brand {
+    width: 100%;
+    background: #0f172a;
+    color: #38bdf8;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .top-brand i { width: 22px; height: 22px; }
+  
+  /* --------------------------------
+     LOGIN WRAPPER: BACKGROUND IMAGE
+     -------------------------------- */
+     .login-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 20px;
+    
+      background-image: url('images/background.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    
+      position: relative;
+      overflow: hidden;
+    }
+    
+  
+  /* Overlay so login card is readable */
+  .login-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45); /* adjust 0.2 - 0.55 as needed */
+    z-index: 0;
+  }
+  
+  /* --------------------------------
+     LOGIN CARD: plain white card on top
+     -------------------------------- */
+  .login-card {
+    position: relative;
+    padding: 32px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 16px;
+    background: #ffffff;            /* WHITE card so it stands out */
+    box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+    z-index: 2;                     /* sits above overlay */
+  }
+  
+  /* Make sure card content sits above overlay */
+  .login-card > * {
+    position: relative;
+    z-index: 2;
+    color: #0b1220; /* dark text inside card */
+  }
+  
+  /* Headings + subtext */
+  .login-card h1 {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-align: center;
+    color: #0b1220;
+  }
+  .login-card .subtext {
+    font-size: 15px;
+    margin-bottom: 18px;
+    text-align: center;
+    color: #556475;
+  }
+  
+  /* Form Group */
+  .form-group {
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #263143;
+  }
+  
+  /* Input with icon */
+  .input-group { position: relative; }
+  .input-group i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9aa6b2;
+  }
+  .login-card input {
+    width: 100%;
+    padding: 12px 12px 12px 42px;
+    border-radius: 10px;
+    border: 1px solid #e3e8ee;
+    background-color: #fff;
+    font-size: 14px;
+    color: #0b1220;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+  .login-card input:focus {
+    border-color: #6A5AF9;
+    box-shadow: 0 0 6px rgba(106,90,249,0.15);
+  }
+  
+  /* Forgot link */
+  .forgot {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 13px;
+    color: #6A5AF9;
+  }
+  .forgot:hover { text-decoration: underline; }
+  
+  /* Submit */
+  button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    background: linear-gradient(90deg,#6A5AF9,#9E6AFE);
+    box-shadow: 0 6px 18px rgba(106,90,249,0.18);
+  }
+  button[type="submit"]:hover { transform: translateY(-2px); }
+  
+  /* Separator */
+  .separator { display:flex; align-items:center; margin:18px 0; }
+  .separator hr { flex:1; border:none; border-top:1px solid #e6eef9; }
+  .separator span { padding:0 12px; font-size:12px; color:#7b8791; }
+  
+  /* Social buttons */
+  .social-login { display:flex; gap: 18px; justify-content: center; }
+  .social-btn {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #dadce0;
+    background: #fff;
+    font-weight: 500;
+    font-size: 14px;
+    color: #3c4043;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .social-btn:hover {
+    background: #f8f9fa;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    border-color: #d2d3d4;
+  }
+  .social-btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  .social-btn img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+  }
+  
+  /* Signup link */
+  .signup { margin-top:18px; text-align:center; font-size:14px; color:#5b6670; }
+  .signup a { color:#6A5AF9; font-weight:600; }
+  
+  /* Small screens */
+  @media (max-width:450px) {
+    .login-card { padding: 20px; max-width: 340px; }
+    .top-brand { font-size: 18px; }
+  }
+  

@@ -1,0 +1,115 @@
+:root{
+    --bg:#6f7376;
+    --card:#ffffff;
+    --muted:#7d8694;
+    --accent1: #6a5cff;
+    --accent2: #9b5cff;
+    --shadow: 0 15px 30px rgba(0,0,0,0.25);
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto;
+  }
+  
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+  
+  body {
+    background: url('/mnt/data/cf244764-8a4e-447c-ad7f-b33a3979beff.png') center top / cover no-repeat, var(--bg);
+    display: flex;
+    flex-direction: column;
+    color: #111827;
+  }
+  
+  /* Top bar */
+  .topbar{
+    background: rgba(10,20,30,0.95);
+    color: #bfe7ff;
+    padding: 14px;
+    text-align: center;
+    font-weight: 700;
+  }
+  
+  /* Page layout */
+  .page{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  
+  /* Card */
+  .card{
+    width: 380px;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  
+  .card h1{
+    margin-bottom: 8px;
+    font-size: 24px;
+  }
+  
+  .sub{
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 18px;
+  }
+  
+  /* Form */
+  .field{
+    text-align: left;
+  }
+  
+  .label-text{
+    font-size: 13px;
+    color: #253141;
+  }
+  
+  input{
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 6px;
+    border: 1px solid #e6e9ef;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  
+  /* Button */
+  .primary{
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    color: white;
+    border: none;
+    padding: 12px;
+    margin-top: 14px;
+    width: 100%;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .muted{
+    font-size: 13px;
+    color: var(--muted);
+  }
+  
+  /* Footer */
+  .site-footer{
+    padding: 14px;
+    text-align: center;
+    background: rgba(5,7,10,0.95);
+    color: #8da6bf;
+    font-size: 13px;
+  }
+  
+  a{
+    color: #6a5cff;
+    text-decoration: none;
+  }
+  a:hover{
+    text-decoration: underline;
+  }
+  

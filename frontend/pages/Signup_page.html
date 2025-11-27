@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Park Made Easy — Sign up</title>
+  <link rel="stylesheet" href="Signup.css?v=3" />
+</head>
+<body>
+  <header class="topbar">
+    <a href="Landing_page.html" class="brand" style="text-decoration: none; color: inherit; cursor: pointer;">Park Made Easy</a>
+  </header>
+
+  <main class="page">
+    <div class="card" role="region" aria-label="Sign up form">
+      <h1>Create account</h1>
+      <p class="sub">Fill the details to create your new account</p>
+
+      <form id="signupForm" novalidate>
+        <label class="field">
+          <span class="label-text">Full name</span>
+          <input id="fullName" type="text" placeholder="Your full name" />
+        </label>
+
+        <label class="field">
+          <span class="label-text">Email</span>
+          <input id="signupEmail" type="email" placeholder="Enter your email" />
+        </label>
+
+        <label class="field">
+          <span class="label-text">Password</span>
+          <input id="signupPassword" type="password" placeholder="Create a password" />
+        </label>
+
+        <label class="field">
+          <span class="label-text">Confirm password</span>
+          <input id="confirmPassword" type="password" placeholder="Confirm password" />
+        </label>
+
+        <button class="primary" id="createAccountBtn" type="button">Create account</button>
+
+        <p class="muted">Already have an account? <a href="Login_page.html">Sign in</a></p>
+      </form>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    © 2025 Park Made Easy. All rights reserved.
+  </footer>
+
+  <script src="Signup.js?v=3"></script>
+</body>
+</html>
