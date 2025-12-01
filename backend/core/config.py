@@ -43,6 +43,11 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
     ]
     
+    # Google OAuth
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+    GOOGLE_REDIRECT_URI: str = "http://localhost:8000/v1/auth/google/callback"
+    
     # Payments (Stripe)
     STRIPE_SECRET_KEY: str = ""
     STRIPE_PUBLISHABLE_KEY: str = ""

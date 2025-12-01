@@ -21,7 +21,27 @@
                 <input type="text" placeholder="Search by area or landmark">
             </div>
             <div class="nav-buttons">
-                <button onclick="window.location.href='Landing_page.html'" class="btn-login">Log out</button>
+                <div class="profile-dropdown">
+                    <button class="profile-button" id="profileButton">
+                        <i data-lucide="user" class="profile-icon-svg"></i>
+                        <span>Profile</span>
+                        <i data-lucide="chevron-down" class="chevron-icon"></i>
+                    </button>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#" class="dropdown-item" onclick="showBookings(event)">
+                            <i data-lucide="calendar"></i>
+                            <span>Previous Bookings</span>
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="showSettings(event)">
+                            <i data-lucide="settings"></i>
+                            <span>Settings</span>
+                        </a>
+                        <a href="Landing_page.html" class="dropdown-item logout">
+                            <i data-lucide="log-out"></i>
+                            <span>Log out</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>

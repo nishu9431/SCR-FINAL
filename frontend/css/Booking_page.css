@@ -42,6 +42,22 @@ body {
 .btn-signup { background-color: var(--primary-color); color: #fff; }
 .btn-signup:hover { background-color: var(--primary-hover); }
 
+/* Profile Dropdown */
+.profile-dropdown { position: relative; }
+.profile-button { display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 50px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+.profile-button:hover { background: rgba(255, 255, 255, 0.15); border-color: var(--brand-skyblue); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+.profile-icon-svg { width: 20px; height: 20px; }
+.chevron-icon { width: 16px; height: 16px; transition: transform 0.3s ease; }
+.profile-dropdown.active .chevron-icon { transform: rotate(180deg); }
+.dropdown-menu { position: absolute; top: 60px; right: 0; width: 240px; background: #fff; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 1000; overflow: hidden; }
+.dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+.dropdown-item { display: flex; align-items: center; gap: 12px; padding: 14px 18px; color: #475569; text-decoration: none; transition: all 0.2s ease; font-size: 15px; border-bottom: 1px solid #f1f5f9; }
+.dropdown-item:last-child { border-bottom: none; }
+.dropdown-item:hover { background: #f8fafc; color: #1E1B4B; padding-left: 22px; }
+.dropdown-item i { width: 20px; height: 20px; }
+.dropdown-item.logout { color: #ef4444; background: #fef2f2; }
+.dropdown-item.logout:hover { background: #fee2e2; }
+
 /* ---------- HERO / MAP ---------- */
 .hero-section { padding: 24px 0 48px 0; }
 .hero-container { display: flex; align-items: center; justify-content: space-between; gap: 48px; }

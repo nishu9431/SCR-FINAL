@@ -119,10 +119,37 @@
 });
 
 // Google Login Function
-function loginWithGoogle() {
-  alert("Google OAuth integration coming soon! For now, please use email/password login.");
-  // TODO: Implement Google OAuth
-  // window.location.href = "http://localhost:8000/api/auth/google";
+async function loginWithGoogle() {
+  try {
+    // Get Google OAuth URL from backend
+    const response = await fetch("http://localhost:8000/v1/auth/google");
+    const data = await response.json();
+    
+    // Redirect to Google login
+    window.location.href = data.url;
+  } catch (error) {
+    console.error("Google login error:", error);
+    alert("Failed to initiate Google login. Please try again.");
+  }
+}
+
+// Handle Google OAuth callback (for redirect back from Google)
+if (window.location.search.includes('code=')) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+  
+  fetch(`http://localhost:8000/v1/auth/google/callback?code=${code}`)
+    .then(res => res.json())
+    .then(data => {
+      localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem('user_email', data.user.email);
+      alert("Google login successful!");
+      window.location.href = "Booking_page.html";
+    })
+    .catch(error => {
+      console.error("Google callback error:", error);
+      alert("Google login failed. Please try again.");
+    });
 }
 </script>
 

@@ -163,3 +163,76 @@ async def login_for_access_token(
     
     access_token = create_access_token(data={"sub": user.id})
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.get("/google")
+async def google_login():
+    """Initiate Google OAuth login"""
+    google_auth_url = (
+        f"https://accounts.google.com/o/oauth2/v2/auth?"
+        f"client_id={settings.GOOGLE_CLIENT_ID}&"
+        f"redirect_uri={settings.GOOGLE_REDIRECT_URI}&"
+        f"response_type=code&"
+        f"scope=openid%20email%20profile&"
+        f"access_type=offline"
+    )
+    return {"url": google_auth_url}
+
+
+@router.get("/google/callback")
+async def google_callback(code: str, db: Session = Depends(get_db)):
+    """Handle Google OAuth callback"""
+    import requests
+    
+    # Exchange code for token
+    token_url = "https://oauth2.googleapis.com/token"
+    token_data = {
+        "code": code,
+        "client_id": settings.GOOGLE_CLIENT_ID,
+        "client_secret": settings.GOOGLE_CLIENT_SECRET,
+        "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+        "grant_type": "authorization_code"
+    }
+    
+    token_response = requests.post(token_url, data=token_data)
+    if token_response.status_code != 200:
+        raise HTTPException(status_code=400, detail="Failed to get access token")
+    
+    access_token = token_response.json().get("access_token")
+    
+    # Get user info from Google
+    user_info_url = "https://www.googleapis.com/oauth2/v2/userinfo"
+    user_info_response = requests.get(
+        user_info_url,
+        headers={"Authorization": f"Bearer {access_token}"}
+    )
+    
+    if user_info_response.status_code != 200:
+        raise HTTPException(status_code=400, detail="Failed to get user info")
+    
+    google_user = user_info_response.json()
+    email = google_user.get("email")
+    name = google_user.get("name", email.split("@")[0])
+    
+    # Check if user exists, create if not
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        # Create new user with Google account
+        user = User(
+            email=email,
+            name=name,
+            hashed_password=get_password_hash("google_oauth_" + email),  # Placeholder password
+            role="driver",
+            is_verified=True  # Google accounts are pre-verified
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    
+    # Create JWT token
+    jwt_token = create_access_token(data={"sub": user.id})
+    
+    # Redirect to frontend with token in URL
+    from fastapi.responses import RedirectResponse
+    frontend_url = f"http://localhost:3000/pages/Booking_page.html?token={jwt_token}&email={user.email}"
+    return RedirectResponse(url=frontend_url)

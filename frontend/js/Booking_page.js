@@ -1,4 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if user logged in via Google OAuth (token in URL)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('token')) {
+        const token = urlParams.get('token');
+        const email = urlParams.get('email');
+        localStorage.setItem('access_token', token);
+        localStorage.setItem('user_email', email);
+        // Clean URL by removing parameters
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    // Initialize user profile
+    initializeUserProfile();
+    
     // thumbnail image generated earlier in session
     const THUMB = 'https://placehold.co/400x300/6366f1/ffffff?text=Parking';
   
@@ -180,4 +194,38 @@ document.addEventListener('DOMContentLoaded', () => {
     renderBookingCards();
   
   }); // DOMContentLoaded
+  
+  // Profile dropdown functions
+  function initializeUserProfile() {
+      // Toggle dropdown
+      const profileButton = document.getElementById('profileButton');
+      const dropdownMenu = document.getElementById('dropdownMenu');
+      const profileDropdown = document.querySelector('.profile-dropdown');
+      
+      profileButton.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdownMenu.classList.toggle('show');
+          profileDropdown.classList.toggle('active');
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', () => {
+          dropdownMenu.classList.remove('show');
+          profileDropdown.classList.remove('active');
+      });
+      
+      dropdownMenu.addEventListener('click', (e) => {
+          e.stopPropagation();
+      });
+  }
+  
+  function showBookings(e) {
+      e.preventDefault();
+      alert('Previous Bookings: This feature will show your booking history. Coming soon!');
+  }
+  
+  function showSettings(e) {
+      e.preventDefault();
+      alert('Settings: Configure your account preferences. Coming soon!');
+  }
   

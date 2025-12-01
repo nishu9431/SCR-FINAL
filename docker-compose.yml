@@ -72,6 +72,9 @@ services:
       MQTT_BROKER: mqtt
       SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-http://localhost:8000/v1/auth/google/callback}
     ports:
       - "8000:8000"
     depends_on:
