@@ -24,7 +24,7 @@ async def create_booking(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Create a new parking booking"""
+    """Create a new parking booking with vehicle type support"""
     
     # Validate parking lot exists
     lot = db.query(ParkingLot).filter(ParkingLot.id == booking_data.lot_id).first()
@@ -41,32 +41,101 @@ async def create_booking(
     if booking_data.start_time < datetime.utcnow():
         raise HTTPException(status_code=400, detail="Cannot book in the past")
     
-    # Find available slot
-    available_slot = db.query(ParkingSlot).filter(
-        and_(
-            ParkingSlot.lot_id == booking_data.lot_id,
-            ParkingSlot.status == SlotStatus.AVAILABLE,
-            ParkingSlot.is_active == True
-        )
-    ).first()
+    # Get vehicle type from booking data (default to "4wheeler" if not provided)
+    vehicle_type = getattr(booking_data, 'vehicle_type', '4wheeler')
+    if vehicle_type not in ["2wheeler", "4wheeler", "others"]:
+        vehicle_type = "4wheeler"
     
-    if not available_slot:
-        raise HTTPException(status_code=400, detail="No available slots")
+    # Find the specific slot if slot_id provided, otherwise find any available slot of the right type
+    if hasattr(booking_data, 'slot_id') and booking_data.slot_id:
+        # Check if the specified slot is available
+        specified_slot = db.query(ParkingSlot).filter(
+            and_(
+                ParkingSlot.id == booking_data.slot_id,
+                ParkingSlot.lot_id == booking_data.lot_id,
+                ParkingSlot.vehicle_type == vehicle_type,
+                ParkingSlot.is_active == True
+            )
+        ).first()
+        
+        if not specified_slot:
+            raise HTTPException(status_code=400, detail="Specified slot not found or incompatible")
+        
+        # Check if slot is available during requested time
+        overlapping_booking = db.query(Booking).filter(
+            and_(
+                Booking.slot_id == specified_slot.id,
+                Booking.status.in_([BookingStatus.CONFIRMED, BookingStatus.ACTIVE, BookingStatus.PENDING]),
+                Booking.start_time < booking_data.end_time,
+                Booking.end_time > booking_data.start_time
+            )
+        ).first()
+        
+        if overlapping_booking:
+            raise HTTPException(status_code=400, detail="Slot is already booked for this time period")
+        
+        available_slot = specified_slot
+    else:
+        # Find any available slot of the correct vehicle type
+        # First get all slots of this type
+        all_slots = db.query(ParkingSlot).filter(
+            and_(
+                ParkingSlot.lot_id == booking_data.lot_id,
+                ParkingSlot.vehicle_type == vehicle_type,
+                ParkingSlot.is_active == True
+            )
+        ).all()
+        
+        # Find one that doesn't have overlapping bookings
+        available_slot = None
+        for slot in all_slots:
+            overlapping = db.query(Booking).filter(
+                and_(
+                    Booking.slot_id == slot.id,
+                    Booking.status.in_([BookingStatus.CONFIRMED, BookingStatus.ACTIVE, BookingStatus.PENDING]),
+                    Booking.start_time < booking_data.end_time,
+                    Booking.end_time > booking_data.start_time
+                )
+            ).first()
+            
+            if not overlapping:
+                available_slot = slot
+                break
+        
+        if not available_slot:
+            raise HTTPException(status_code=400, detail=f"No available {vehicle_type} slots for this time period")
     
-    # Calculate duration and price
+    # Calculate duration and price based on vehicle type
     duration_hours = (booking_data.end_time - booking_data.start_time).total_seconds() / 3600
-    base_price = lot.hourly_rate * duration_hours
+    
+    # Get vehicle-specific pricing
+    vehicle_pricing = lot.vehicle_pricing or {}
+    if vehicle_type == "2wheeler":
+        price_per_hour = vehicle_pricing.get("2wheeler", lot.hourly_rate * 0.7)
+    elif vehicle_type == "4wheeler":
+        price_per_hour = vehicle_pricing.get("4wheeler", lot.hourly_rate)
+    else:
+        price_per_hour = vehicle_pricing.get("others", lot.hourly_rate * 0.85)
+    
+    base_price = price_per_hour * duration_hours
     
     # Apply dynamic pricing (simple multiplier for now)
     current_occupancy = db.query(ParkingSlot).filter(
         and_(
             ParkingSlot.lot_id == booking_data.lot_id,
+            ParkingSlot.vehicle_type == vehicle_type,
             ParkingSlot.status != SlotStatus.AVAILABLE
         )
     ).count()
     
-    total_slots = db.query(ParkingSlot).filter(ParkingSlot.lot_id == booking_data.lot_id).count()
-    occupancy_rate = current_occupancy / total_slots if total_slots > 0 else 0
+    total_slots_of_type = db.query(ParkingSlot).filter(
+        and_(
+            ParkingSlot.lot_id == booking_data.lot_id,
+            ParkingSlot.vehicle_type == vehicle_type
+        )
+    ).count()
+    
+    occupancy_rate = current_occupancy / total_slots_of_type if total_slots_of_type > 0 else 0
     
     # Surge pricing: 1.5x if >80% full, 1.2x if >60% full
     if occupancy_rate > 0.8:
@@ -89,9 +158,10 @@ async def create_booking(
         start_time=booking_data.start_time,
         end_time=booking_data.end_time,
         vehicle_plate=booking_data.vehicle_plate,
+        vehicle_type=vehicle_type,
         price=final_price,
         qr_token=qr_token,
-        status=BookingStatus.PENDING
+        status=BookingStatus.CONFIRMED
     )
     
     db.add(new_booking)

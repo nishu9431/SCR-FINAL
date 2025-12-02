@@ -224,6 +224,8 @@ body {
     .hero-map-label { justify-content: center; }
     .parking-grid { grid-template-columns: repeat(2, 1fr); }
     .map-view { height: 420px; }
+    .time-inputs-row { flex-direction: column; gap: 16px; }
+    .vehicle-type-options { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {
@@ -233,4 +235,173 @@ body {
     .parking-grid { grid-template-columns: 1fr; }
     .footer-container { flex-direction: column; gap: 16px; }
     .hero-box { padding: 28px; flex-direction: column; gap: 24px; }
+}
+
+/* ---------- Time Selection Section ---------- */
+.time-selection-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px 0;
+    margin-top: 0;
+}
+
+.time-selection-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.time-selection-card h2 {
+    color: var(--dark-text);
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 24px 0;
+    text-align: center;
+}
+
+.time-inputs-row {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.time-input-group {
+    flex: 1;
+    min-width: 220px;
+    max-width: 300px;
+}
+
+.time-input-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 8px;
+}
+
+.time-input-group input[type="datetime-local"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    color: var(--dark-text);
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.time-input-group input[type="datetime-local"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(106, 90, 249, 0.1);
+}
+
+.search-parking-btn {
+    padding: 12px 32px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.search-parking-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(106, 90, 249, 0.3);
+}
+
+.search-parking-btn:active {
+    transform: translateY(0);
+}
+
+/* ---------- Vehicle Type Buttons in Cards ---------- */
+.vehicle-type-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.vehicle-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.vehicle-btn:not(.disabled):hover {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, rgba(106, 90, 249, 0.05) 0%, rgba(106, 90, 249, 0.1) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(106, 90, 249, 0.15);
+}
+
+.vehicle-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f5f5f5;
+}
+
+.vehicle-btn .vehicle-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.vehicle-btn .vehicle-info {
+    flex: 1;
+    text-align: left;
+}
+
+.vehicle-btn .vehicle-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 4px;
+}
+
+.vehicle-btn .vehicle-details {
+    font-size: 13px;
+    color: var(--body-text);
+}
+
+.vehicle-btn.two-wheeler:not(.disabled):hover {
+    border-color: #10B981;
+}
+
+.vehicle-btn.four-wheeler:not(.disabled):hover {
+    border-color: #3B82F6;
+}
+
+.vehicle-btn.others:not(.disabled):hover {
+    border-color: #F59E0B;
+}
+
+/* Loading and error messages */
+.loading-message, .error-message {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 16px;
+    color: var(--body-text);
+}
+
+.error-message {
+    color: var(--low-avail);
+}
+
+/* Update card footer to remove old Book Now button styles */
+.pme-footer {
+    display: none; /* Hide old footer with single price/button */
 }

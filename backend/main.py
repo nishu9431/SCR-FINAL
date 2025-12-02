@@ -14,7 +14,7 @@ from pathlib import Path
 # Add the backend directory to Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from api.routes import auth, users, lots, bookings, payments, occupancy, predictions, owners, admin
+from api.routes import auth, users, lots, bookings, payments, occupancy, predictions, owners, admin, locations
 from core.config import settings
 from core.database import engine, Base
 from core.websocket_manager import manager
@@ -117,6 +117,7 @@ async def websocket_endpoint(websocket: WebSocket):
 # Include API routers
 app.include_router(auth.router, prefix="/v1/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/v1/users", tags=["Users"])
+app.include_router(locations.router, prefix="/v1/locations", tags=["Locations"])
 app.include_router(lots.router, prefix="/v1/lots", tags=["Lots"])
 app.include_router(bookings.router, prefix="/v1/bookings", tags=["Bookings"])
 app.include_router(payments.router, prefix="/v1/payments", tags=["Payments"])

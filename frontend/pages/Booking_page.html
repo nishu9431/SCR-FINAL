@@ -97,9 +97,28 @@
             </div>
         </section>
 
+        <section class="time-selection-section">
+            <div class="container">
+                <div class="time-selection-card">
+                    <h2>Select Your Parking Time</h2>
+                    <div class="time-inputs-row">
+                        <div class="time-input-group">
+                            <label for="start-time">Start Time</label>
+                            <input type="datetime-local" id="start-time" required>
+                        </div>
+                        <div class="time-input-group">
+                            <label for="end-time">End Time</label>
+                            <input type="datetime-local" id="end-time" required>
+                        </div>
+                        <button class="search-parking-btn" id="search-parking-btn">Search Available Parking</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="nearby-parking-section">
             <div class="container">
-                <h2>Nearby Parking Lots</h2>
+                <h2>Available Parking Locations</h2>
                 <div class="parking-grid" id="parking-grid"></div>
             </div>
         </section>
@@ -119,6 +138,22 @@
 
     <script>
       lucide.createIcons();
+      
+      // Handle Google OAuth callback - get token from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      const email = urlParams.get('email');
+      
+      if (token && email) {
+        // Store the token and email from Google OAuth
+        localStorage.setItem('access_token', token);
+        localStorage.setItem('user_email', email);
+        
+        // Clean up the URL by removing the parameters
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        console.log('Google OAuth login successful!');
+      }
     </script>
 </body>
 </html>

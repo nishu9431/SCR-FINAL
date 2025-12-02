@@ -13,10 +13,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize user profile
     initializeUserProfile();
     
+    // API base URL
+    const API_BASE = 'http://localhost:8000/v1';
+    
     // thumbnail image generated earlier in session
     const THUMB = 'https://placehold.co/400x300/6366f1/ffffff?text=Parking';
   
-    // data (8 parking locations as requested)
+    // Initialize time inputs with defaults (current time + 1 hour)
+    const startTimeInput = document.getElementById('start-time');
+    const endTimeInput = document.getElementById('end-time');
+    const searchButton = document.getElementById('search-parking-btn');
+    
+    // Set default values
+    const now = new Date();
+    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+    const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+    
+    startTimeInput.value = formatDateTimeLocal(oneHourLater);
+    endTimeInput.value = formatDateTimeLocal(twoHoursLater);
+    
+    // Static data for map pins (visual only)
     const parkingLocations = [
         { id: "1", name: "MG Road Parking", lat: 35, lng: 45, availableSpots: 15 },
         { id: "2", name: "Forum Mall Parking - Konankunte", lat: 55, lng: 65, availableSpots: 8 },
@@ -26,17 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: "6", name: "Garuda Mall - Jayanagar", lat: 70, lng: 40, availableSpots: 6 },
         { id: "7", name: "Royal Meenakshi Mall - Bannerghatta Road", lat: 40, lng: 70, availableSpots: 18 },
         { id: "8", name: "VegaCity - Bannerghatta Road", lat: 50, lng: 25, availableSpots: 4 },
-    ];
-  
-    const nearbyParkingLots = [
-        { id: "1", name: "MG Road Parking", availableSpots: 15, distance: "0.5 km away", pricePerHour: 60 },
-        { id: "2", name: "Forum Mall Parking - Konankunte", availableSpots: 8, distance: "1.2 km away", pricePerHour: 50 },
-        { id: "3", name: "Nexus Mall - Koramangala", availableSpots: 3, distance: "0.8 km away", pricePerHour: 70 },
-        { id: "4", name: "Indranagar Parking Lot", availableSpots: 12, distance: "2.1 km away", pricePerHour: 55 },
-        { id: "5", name: "Phoenix Mall of Asia - Yelahanka", availableSpots: 20, distance: "3.5 km away", pricePerHour: 45 },
-        { id: "6", name: "Garuda Mall - Jayanagar", availableSpots: 6, distance: "1.8 km away", pricePerHour: 65 },
-        { id: "7", name: "Royal Meenakshi Mall - Bannerghatta Road", availableSpots: 18, distance: "2.5 km away", pricePerHour: 50 },
-        { id: "8", name: "VegaCity - Bannerghatta Road", availableSpots: 4, distance: "2.0 km away", pricePerHour: 55 },
     ];
   
     const AVAILABILITY_CONFIG = {
@@ -76,67 +81,150 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = pinsHTML;
     }
   
-    /******** NEW: Render PME glossy booking cards ********/
-    function renderBookingCards() {
+    /******** NEW: Fetch locations from API and render cards with vehicle-type buttons ********/
+    async function fetchAndRenderLocations() {
         const grid = document.getElementById('parking-grid');
         if (!grid) return;
+        
+        try {
+            const startTime = startTimeInput.value;
+            const endTime = endTimeInput.value;
+            
+            if (!startTime || !endTime) {
+                grid.innerHTML = '<p class="error-message">Please select start and end times</p>';
+                return;
+            }
+            
+            // Show loading
+            grid.innerHTML = '<p class="loading-message">Loading parking locations...</p>';
+            
+            // Fetch locations from API
+            const response = await fetch(`${API_BASE}/locations?start_time=${encodeURIComponent(startTime)}&end_time=${encodeURIComponent(endTime)}`);
+            
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            const locations = data.locations || [];
+            
+            if (!locations || locations.length === 0) {
+                grid.innerHTML = '<p class="error-message">No parking locations available for the selected time.</p>';
+                return;
+            }
+            
+            // Render cards
+            let cardsHTML = '';
+            locations.forEach(lot => {
+                const vehicleTypes = lot.vehicle_types || {};
+                const twoWheeler = vehicleTypes["2wheeler"] || {};
+                const fourWheeler = vehicleTypes["4wheeler"] || {};
+                const others = vehicleTypes["others"] || {};
+                
+                const totalAvailable = (twoWheeler.available_slots || 0) + (fourWheeler.available_slots || 0) + (others.available_slots || 0);
+                const availability = getAvailability(totalAvailable);
+                const availClass = availability === AVAILABILITY_CONFIG.high ? 'high' : (availability === AVAILABILITY_CONFIG.medium ? 'mid' : 'low');
+                const availCss = availability === AVAILABILITY_CONFIG.high ? 'av-high' : (availability === AVAILABILITY_CONFIG.medium ? 'av-mid' : 'av-low');
   
-        // build HTML for glossy booking cards
-        let cardsHTML = '';
-        nearbyParkingLots.forEach(lot => {
-            const availability = getAvailability(lot.availableSpots);
-            // map availability.label ('high'|'mid'|'low') to our CSS class names used earlier
-            const availClass = availability === AVAILABILITY_CONFIG.high ? 'high' : (availability === AVAILABILITY_CONFIG.medium ? 'mid' : 'low');
-            const availCss = availability === AVAILABILITY_CONFIG.high ? 'av-high' : (availability === AVAILABILITY_CONFIG.medium ? 'av-mid' : 'av-low');
-  
-            cardsHTML += `
-              <article class="pme-card" data-lot="${escapeHtml(lot.name)}" data-price="${lot.pricePerHour}" data-distance="${escapeHtml(lot.distance)}">
-                <div class="pme-card-thumb">
-                  <img src="${THUMB}" alt="${escapeHtml(lot.name)} preview" />
-                </div>
-  
-                <div class="pme-card-body">
-                  <div class="pme-card-head">
-                    <div class="pme-icon pin ${getIconColor(lot)}" aria-hidden="true"></div>
-                    <div>
-                      <h3 class="pme-title">${escapeHtml(lot.name)}</h3>
-                      <div class="pme-distance">${escapeHtml(lot.distance)}</div>
+                cardsHTML += `
+                  <article class="pme-card" data-lot-id="${lot.id}" data-lot-name="${escapeHtml(lot.name)}">
+                    <div class="pme-card-thumb">
+                      <img src="${THUMB}" alt="${escapeHtml(lot.name)} preview" />
                     </div>
-                  </div>
-  
-                  <div class="pme-availability ${availCss}">${availability === AVAILABILITY_CONFIG.high ? '✓' : (availability === AVAILABILITY_CONFIG.medium ? '⚠' : '!')} <strong class="pme-available">${lot.availableSpots}</strong> Spots Available</div>
-  
-                  <div class="pme-footer">
-                    <div class="pme-price"><span class="pme-currency">₹</span><span class="pme-amount">${lot.pricePerHour}</span><small class="pme-per">/hr</small></div>
-                    <button class="pme-btn book" type="button">Book Now</button>
-                  </div>
-                </div>
-              </article>
-            `;
-        });
-  
-        grid.innerHTML = cardsHTML;
-  
-        // render lucide icons in the newly-inserted HTML (for any inline lucide tags)
-        if (window.lucide && typeof window.lucide.createIcons === 'function') {
-          window.lucide.createIcons();
+      
+                    <div class="pme-card-body">
+                      <div class="pme-card-head">
+                        <div class="pme-icon pin green" aria-hidden="true"></div>
+                        <div>
+                          <h3 class="pme-title">${escapeHtml(lot.name)}</h3>
+                          <div class="pme-distance">${lot.distance}</div>
+                        </div>
+                      </div>
+      
+                      <div class="pme-availability ${availCss}">${availability === AVAILABILITY_CONFIG.high ? '✓' : (availability === AVAILABILITY_CONFIG.medium ? '⚠' : '!')} <strong class="pme-available">${totalAvailable}</strong> Total Spots Available</div>
+                      
+                      <div class="vehicle-type-options">
+                        ${twoWheeler.available_slots > 0 ? `
+                        <button class="vehicle-btn two-wheeler" data-vehicle-type="2wheeler" data-price="${twoWheeler.price_per_hour || 0}" data-available="${twoWheeler.available_slots}">
+                          <span class="vehicle-icon">🏍️</span>
+                          <div class="vehicle-info">
+                            <div class="vehicle-label">2 Wheeler</div>
+                            <div class="vehicle-details">₹${twoWheeler.price_per_hour || 0}/hr • ${twoWheeler.available_slots} slots</div>
+                          </div>
+                        </button>
+                        ` : `
+                        <button class="vehicle-btn two-wheeler disabled" disabled>
+                          <span class="vehicle-icon">🏍️</span>
+                          <div class="vehicle-info">
+                            <div class="vehicle-label">2 Wheeler</div>
+                            <div class="vehicle-details">No slots available</div>
+                          </div>
+                        </button>
+                        `}
+                        
+                        ${fourWheeler.available_slots > 0 ? `
+                        <button class="vehicle-btn four-wheeler" data-vehicle-type="4wheeler" data-price="${fourWheeler.price_per_hour || 0}" data-available="${fourWheeler.available_slots}">
+                          <span class="vehicle-icon">🚗</span>
+                          <div class="vehicle-info">
+                            <div class="vehicle-label">4 Wheeler</div>
+                            <div class="vehicle-details">₹${fourWheeler.price_per_hour || 0}/hr • ${fourWheeler.available_slots} slots</div>
+                          </div>
+                        </button>
+                        ` : `
+                        <button class="vehicle-btn four-wheeler disabled" disabled>
+                          <span class="vehicle-icon">🚗</span>
+                          <div class="vehicle-info">
+                            <div class="vehicle-label">4 Wheeler</div>
+                            <div class="vehicle-details">No slots available</div>
+                          </div>
+                        </button>
+                        `}
+                        
+                        ${others.available_slots > 0 ? `
+                        <button class="vehicle-btn others" data-vehicle-type="others" data-price="${others.price_per_hour || 0}" data-available="${others.available_slots}">
+                          <span class="vehicle-icon">🚐</span>
+                          <div class="vehicle-info">
+                            <div class="vehicle-label">Others</div>
+                            <div class="vehicle-details">₹${others.price_per_hour || 0}/hr • ${others.available_slots} slots</div>
+                          </div>
+                        </button>
+                        ` : `
+                        <button class="vehicle-btn others disabled" disabled>
+                          <span class="vehicle-icon">🚐</span>
+                          <div class="vehicle-info">
+                            <div class="vehicle-label">Others</div>
+                            <div class="vehicle-details">No slots available</div>
+                          </div>
+                        </button>
+                        `}
+                      </div>
+                    </div>
+                  </article>
+                `;
+            });
+      
+            grid.innerHTML = cardsHTML;
+      
+            // render lucide icons in the newly-inserted HTML (for any inline lucide tags)
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+              window.lucide.createIcons();
+            }
+        } catch (error) {
+            console.error('Error fetching locations:', error);
+            grid.innerHTML = '<p class="error-message">Failed to load parking locations. Please try again.</p>';
         }
     }
   
     /******** helpers ********/
-    function getIconColor(lot) {
-      // a simple mapping to give variety — you can adjust
-      const map = {
-        'City Mall Parking': 'green',
-        'MG Road Parking': 'orange',
-        'Brigade Road Lot': 'red',
-        'Koramangala Hub': 'green',
-        'Indiranagar Plaza': 'purple',
-        'Whitefield Central': 'amber'
-      };
-      return map[lot.name] || 'green';
+    function formatDateTimeLocal(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
     }
-  
+    
     function escapeHtml(s) {
         return String(s)
           .replace(/&/g, '&amp;')
@@ -145,53 +233,41 @@ document.addEventListener('DOMContentLoaded', () => {
           .replace(/"/g, '&quot;');
     }
   
-    /******** event wiring for Book buttons ********/
+    /******** event wiring for vehicle type buttons ********/
     document.addEventListener('click', function(e){
-      const btn = e.target.closest && e.target.closest('.pme-btn.book');
+      const btn = e.target.closest && e.target.closest('.vehicle-btn:not(.disabled)');
       if (!btn) return;
       const card = btn.closest('.pme-card');
       if (!card) return;
   
-      const payload = {
-        lot: card.dataset.lot,
-        price: Number(card.dataset.price || 0),
-        distance: card.dataset.distance,
-        spots: card.querySelector('.pme-available')?.textContent || null
-      };
-  
-      // If your app has a modal open function, call it
-      if (typeof window.openBookingModal === 'function') {
-        try {
-          window.openBookingModal(payload);
-          return;
-        } catch (err) {
-          console.warn('openBookingModal threw:', err);
-        }
-      }
-  
-      // Dispatch custom event so existing app code can listen
-      const ev = new CustomEvent('pme:book', { detail: payload, bubbles: true, cancelable: true });
-      document.dispatchEvent(ev);
-  
-      // fallback local visual feedback if nobody handles the event
-      setTimeout(() => {
-        if (!window._pmeHandledBooking) {
-          btn.disabled = true;
-          const original = btn.innerText;
-          btn.innerText = 'Booked ✓';
-          btn.style.background = 'linear-gradient(90deg,#43c07a,#38b873)';
-          setTimeout(() => {
-            btn.innerText = original;
-            btn.disabled = false;
-            btn.style.background = '';
-          }, 1400);
-        }
-      }, 10);
+      const lotId = card.dataset.lotId;
+      const lotName = card.dataset.lotName;
+      const vehicleType = btn.dataset.vehicleType;
+      const price = btn.dataset.price;
+      const available = btn.dataset.available;
+      const startTime = startTimeInput.value;
+      const endTime = endTimeInput.value;
+      
+      // Navigate to slot selection page
+      const params = new URLSearchParams({
+          locationId: lotId,
+          locationName: lotName,
+          vehicleType: vehicleType,
+          price: price,
+          available: available,
+          startTime: startTime,
+          endTime: endTime
+      });
+      
+      window.location.href = `SlotSelection_page.html?${params.toString()}`;
     });
+    
+    // Search button handler
+    searchButton.addEventListener('click', fetchAndRenderLocations);
   
     // init
     renderMapPins();
-    renderBookingCards();
+    fetchAndRenderLocations(); // Load locations on page load
   
   }); // DOMContentLoaded
   

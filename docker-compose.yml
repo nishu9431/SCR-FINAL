@@ -86,35 +86,16 @@ services:
       - ./models:/app/models
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
-  # ML Service (Prediction microservice)
-  ml-service:
-    build:
-      context: ./ml-pipeline
-      dockerfile: Dockerfile
-    container_name: parkpulse_ml
-    environment:
-      MODEL_PATH: /models
-    ports:
-      - "8001:8001"
-    volumes:
-      - ./models:/models
-      - ./ml-pipeline:/app
-    command: python prediction_service.py
-
-  # Frontend (React - Development)
+  # Frontend (Static HTML Server)
   frontend:
-    image: node:18-alpine
+    image: python:3.11-slim
     container_name: parkpulse_frontend
     working_dir: /app
-    environment:
-      - REACT_APP_API_URL=http://localhost:8000/v1
-      - REACT_APP_WS_URL=ws://localhost:8000/ws
     ports:
       - "3000:3000"
     volumes:
-      - .:/app
-      - /app/node_modules
-    command: sh -c "npm install && npm start"
+      - ./frontend:/app
+    command: python -m http.server 3000
 
   # Prometheus (Monitoring)
   prometheus:

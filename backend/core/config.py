@@ -44,8 +44,8 @@ class Settings(BaseSettings):
     ]
     
     # Google OAuth
-    GOOGLE_CLIENT_ID: str = ""
-    GOOGLE_CLIENT_SECRET: str = ""
+    GOOGLE_CLIENT_ID: str = "1007665425296-ngugnnmutf9272rs4fvu3lftvndbslcl.apps.googleusercontent.com"
+    GOOGLE_CLIENT_SECRET: str = "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"
     GOOGLE_REDIRECT_URI: str = "http://localhost:8000/v1/auth/google/callback"
     
     # Payments (Stripe)

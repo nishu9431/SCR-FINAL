@@ -100,6 +100,9 @@ class ParkingLot(Base):
     current_price = Column(Float)
     dynamic_pricing_enabled = Column(Boolean, default=False)
     
+    # Vehicle-type specific pricing (JSON): {"2wheeler": 40, "4wheeler": 60, "others": 50}
+    vehicle_pricing = Column(JSON, default={})
+    
     # Metadata
     lot_type = Column(Enum(LotType), default=LotType.PUBLIC)
     amenities = Column(JSON, default=[])  # ["ev_charging", "covered", "security"]
@@ -133,6 +136,9 @@ class ParkingSlot(Base):
     
     # Status
     status = Column(Enum(SlotStatus), default=SlotStatus.AVAILABLE)
+    
+    # Vehicle type: "2wheeler", "4wheeler", "others"
+    vehicle_type = Column(String, default="4wheeler")
     
     # Features
     features = Column(JSON, default=[])  # ["ev_charging", "handicap", "covered"]

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Parking Slot - Park Made Easy</title>
+    <link rel="stylesheet" href="../css/SlotSelection_page.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../js/SlotSelection_page.js" defer></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="Booking_page.html" class="nav-logo">
+                <i data-lucide="arrow-left"></i>
+                <span>Back to Locations</span>
+            </a>
+            <div class="nav-title">
+                <h1 id="location-name">Select Your Slot</h1>
+            </div>
+            <div class="nav-spacer"></div>
+        </div>
+    </nav>
+
+    <main class="slot-selection-main">
+        <div class="container">
+            <div class="booking-info-card">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <i data-lucide="map-pin"></i>
+                        <div>
+                            <div class="info-label">Location</div>
+                            <div class="info-value" id="info-location">Loading...</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i data-lucide="car"></i>
+                        <div>
+                            <div class="info-label">Vehicle Type</div>
+                            <div class="info-value" id="info-vehicle">Loading...</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i data-lucide="clock"></i>
+                        <div>
+                            <div class="info-label">Duration</div>
+                            <div class="info-value" id="info-duration">Loading...</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i data-lucide="indian-rupee"></i>
+                        <div>
+                            <div class="info-label">Price per Hour</div>
+                            <div class="info-value" id="info-price">₹0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slot-grid-section">
+                <div class="section-header">
+                    <h2>Available Parking Slots</h2>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-box available"></div>
+                            <span>Available</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box booked"></div>
+                            <span>Booked</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box selected"></div>
+                            <span>Selected</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="slots-container" class="slots-grid">
+                    <!-- Slots will be dynamically rendered here -->
+                    <div class="loading-message">Loading available slots...</div>
+                </div>
+            </div>
+
+            <div class="booking-summary-card" id="booking-summary" style="display: none;">
+                <div class="summary-content">
+                    <div class="summary-header">
+                        <h3>Booking Summary</h3>
+                        <button class="clear-selection-btn" id="clear-selection">
+                            <i data-lucide="x"></i>
+                            Clear
+                        </button>
+                    </div>
+                    <div class="summary-details">
+                        <div class="summary-row">
+                            <span>Selected Slot:</span>
+                            <strong id="selected-slot-number">-</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Zone:</span>
+                            <strong id="selected-slot-zone">-</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Duration:</span>
+                            <strong id="summary-duration">0 hours</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Rate:</span>
+                            <strong id="summary-rate">₹0/hr</strong>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total Cost:</span>
+                            <strong id="total-cost">₹0</strong>
+                        </div>
+                    </div>
+                </div>
+                <button class="confirm-booking-btn" id="confirm-booking">
+                    <i data-lucide="check-circle"></i>
+                    Confirm Booking
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-container">
+            <p>&copy; 2025 Parking Made Easy</p>
+            <div class="footer-links">
+                <a href="#">Terms</a>
+                <a href="#">Privacy</a>
+                <a href="#">Contact</a>
+                <a href="#">Help</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
