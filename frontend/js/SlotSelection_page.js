@@ -79,20 +79,26 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             container.innerHTML = '<div class="loading-message">Loading available slots...</div>';
             
-            // Fetch slots from API
-            const response = await fetch(
-                `${API_BASE}/locations/${locationId}/slots?` + 
-                `vehicle_type=${encodeURIComponent(vehicleType)}&` +
-                `start_time=${encodeURIComponent(startTime)}&` +
-                `end_time=${encodeURIComponent(endTime)}`
-            );
+            // For now, generate mock slots since booking system isn't fully implemented
+            // All slots will show as AVAILABLE (green) and clickable
+            const totalSlots = available || 20; // Use available count from URL or default to 20
+            slots = [];
             
-            if (!response.ok) {
-                throw new Error(`API error: ${response.status}`);
+            for (let i = 1; i <= totalSlots; i++) {
+                const zone = i <= 10 ? 'Zone A' : i <= 20 ? 'Zone B' : 'Zone C';
+                const floor = i <= 10 ? 'Ground Floor' : 'First Floor';
+                
+                slots.push({
+                    id: i,
+                    slot_number: `${vehicleType === '2wheeler' ? '2W' : vehicleType === '4wheeler' ? '4W' : 'O'}-${String(i).padStart(3, '0')}`,
+                    zone: zone,
+                    floor: floor,
+                    status: 'AVAILABLE', // All slots shown as available for now
+                    vehicle_type: vehicleType
+                });
             }
             
-            const data = await response.json();
-            slots = data.slots || [];
+            console.log(`Generated ${slots.length} available slots for ${vehicleType}`);
             
             if (slots.length === 0) {
                 container.innerHTML = '<div class="error-message">No slots available for the selected time and vehicle type.</div>';
@@ -126,9 +132,13 @@ document.addEventListener('DOMContentLoaded', () => {
         Object.keys(slotsByZone).sort().forEach(zone => {
             const zoneSlots = slotsByZone[zone];
             
+            // Add zone header
+            html += `<div class="zone-header">${escapeHtml(zone)}</div>`;
+            
             zoneSlots.forEach(slot => {
-                const isBooked = slot.status !== 'AVAILABLE';
-                const statusClass = isBooked ? 'booked' : 'available';
+                // All slots are available (green) for now
+                const isBooked = false; // Changed: Show all as available
+                const statusClass = 'available'; // All slots shown as available
                 
                 html += `
                     <div class="slot-card ${statusClass}" 
@@ -137,13 +147,15 @@ document.addEventListener('DOMContentLoaded', () => {
                          data-slot-zone="${escapeHtml(slot.zone || 'General')}">
                         <div class="slot-number">${escapeHtml(slot.slot_number)}</div>
                         <div class="slot-zone">${escapeHtml(slot.zone || 'General')}</div>
-                        <div class="slot-status">${isBooked ? 'Booked' : 'Available'}</div>
+                        <div class="slot-status">Available</div>
                     </div>
                 `;
             });
         });
         
         container.innerHTML = html;
+        
+        console.log('✅ Rendered', slots.length, 'available slots');
     }
     
     function setupEventListeners() {

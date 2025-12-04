@@ -195,6 +195,16 @@ body {
     min-height: 200px;
 }
 
+.zone-header {
+    grid-column: 1 / -1;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--dark-text);
+    padding: 16px 0 8px 0;
+    border-bottom: 2px solid var(--border-color);
+    margin-top: 16px;
+}
+
 .slot-card {
     aspect-ratio: 1;
     border: 2px solid var(--border-color);

@@ -99,7 +99,14 @@ body {
 .nearby-parking-section h2 { font-size: 36px; font-weight: 700; color: var(--dark-text); text-align: center; margin-bottom: 40px; }
 
 /* existing parking-grid kept for fallback; we will populate with new pme-cards */
-.parking-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.parking-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); 
+    gap: 24px;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
 
 /* original parking-card styles (kept) */
 .parking-card { background-color: #fff; border-radius: 12px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05); border: 1px solid var(--border-color); padding: 24px; transition: box-shadow 0.3s ease; }
@@ -115,30 +122,40 @@ body {
 /* scoped with .pme- prefix to avoid conflicts */
 .pme-card {
   display:flex;
-  gap:20px;
-  align-items:stretch;
-  background: linear-gradient(180deg, rgba(214, 217, 244, 0.98), rgba(202, 229, 233, 0.96));
-  border-radius:14px;
-  padding:12px;
-  box-shadow: 0 8px 20px rgba(16,24,40,0.05);
-  border: 1px solid rgba(15,23,36,0.03);
-  transition: transform .18s ease, box-shadow .18s ease;
+  flex-direction: column;
+  gap:16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
+  border-radius:16px;
+  padding:16px;
+  box-shadow: 0 4px 16px rgba(16,24,40,0.08);
+  border: 1px solid rgba(15,23,36,0.06);
+  transition: transform .2s ease, box-shadow .2s ease;
   overflow:hidden;
-  min-height:220px;
+  height: 100%;
 }
 
 .pme-card:hover{
-  transform: translateY(-8px);
-  box-shadow: 0 22px 48px rgba(16,24,40,0.08);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(16,24,40,0.12);
+}
+
+.pme-card.fully-booked {
+  opacity: 0.85;
+  background: linear-gradient(180deg, rgba(240, 240, 240, 0.98), rgba(230, 230, 230, 0.96));
+}
+
+.pme-card.fully-booked:hover {
+  transform: translateY(-2px);
 }
 
 /* thumbnail */
 .pme-card-thumb{
-  width:120px;
-  flex:0 0 120px;
-  border-radius:10px;
+  width:100%;
+  height: 180px;
+  border-radius:12px;
   overflow:hidden;
-  background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(245,245,250,0.9));
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
 }
 .pme-card-thumb img{
   display:block;
@@ -147,31 +164,47 @@ body {
   object-fit:cover;
 }
 
+.booked-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 1px;
+  z-index: 2;
+}
+
 /* body */
 .pme-card-body{
   flex:1;
   display:flex;
   flex-direction:column;
-  gap:10px;
-  padding:6px 4px;
+  gap:12px;
+  padding:0;
 }
 
 /* header row */
-.pme-card-head{ display:flex; gap:12px; align-items:center; }
+.pme-card-head{ display:flex; gap:12px; align-items:flex-start; }
 .pme-icon{
-  width:54px; height:54px; border-radius:12px;
-  box-shadow: 0 8px 18px rgba(99,102,241,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
-  flex:0 0 54px;
+  width:48px; height:48px; border-radius:10px;
+  box-shadow: 0 4px 12px rgba(99,102,241,0.1);
+  flex:0 0 48px;
   position:relative;
   display:inline-block;
 }
 .pme-icon::before{
-  content:"";
+  content:"📍";
   position:absolute;
-  left:50%; top:44%;
+  left:50%; top:50%;
   transform:translate(-50%,-50%);
-  width:18px; height:18px; border-radius:50%;
-  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.9), rgba(0,0,0,0.05) 30%);
+  font-size: 24px;
 }
 
 /* icon color variants */
@@ -189,6 +222,7 @@ body {
 .pme-availability.av-high { background: linear-gradient(90deg,#e8fbf2,#d0f6e6); color:#047857; border: 1px solid rgba(4,120,87,0.06); }
 .pme-availability.av-mid  { background: linear-gradient(90deg,#fff4e6,#ffe9d0); color:#92400e; border:1px solid rgba(146,64,14,0.06); }
 .pme-availability.av-low  { background: linear-gradient(90deg,#ffecec,#ffd7d7); color:#b91c1c; border:1px solid rgba(185,28,28,0.06); }
+.pme-availability.av-booked { background: linear-gradient(90deg,#e5e5e5,#d4d4d4); color:#404040; border:1px solid rgba(64,64,64,0.1); }
 
 /* footer: price + button */
 .pme-footer{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:auto; }
@@ -222,7 +256,7 @@ body {
     .hero-container { flex-direction: column; text-align: center; }
     .hero-text h1 { font-size: 40px; }
     .hero-map-label { justify-content: center; }
-    .parking-grid { grid-template-columns: repeat(2, 1fr); }
+    .parking-grid { grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); }
     .map-view { height: 420px; }
     .time-inputs-row { flex-direction: column; gap: 16px; }
     .vehicle-type-options { grid-template-columns: 1fr; }
