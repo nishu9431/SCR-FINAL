@@ -48,18 +48,6 @@ services:
     volumes:
       - timescale_data:/var/lib/postgresql/data
 
-  # MQTT Broker (Eclipse Mosquitto)
-  mqtt:
-    image: eclipse-mosquitto:2
-    container_name: parkpulse_mqtt
-    ports:
-      - "1883:1883"
-      - "9001:9001"
-    volumes:
-      - ./mqtt/config:/mosquitto/config
-      - mqtt_data:/mosquitto/data
-      - mqtt_logs:/mosquitto/log
-
   # Backend API
   backend:
     build:
@@ -69,7 +57,6 @@ services:
     environment:
       DATABASE_URL: postgresql://parkpulse:parkpulse123@postgres:5432/parkpulse
       REDIS_URL: redis://redis:6379/0
-      MQTT_BROKER: mqtt
       SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
@@ -80,7 +67,6 @@ services:
     depends_on:
       - postgres
       - redis
-      - mqtt
     volumes:
       - ./backend:/app
       - ./models:/app/models
@@ -96,34 +82,6 @@ services:
     volumes:
       - ./frontend:/app
     command: python -m http.server 3000
-
-  # Prometheus (Monitoring)
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: parkpulse_prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-
-  # Grafana (Visualization)
-  grafana:
-    image: grafana/grafana:latest
-    container_name: parkpulse_grafana
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_USERS_ALLOW_SIGN_UP=false
-    ports:
-      - "3001:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
-    depends_on:
-      - prometheus
 
   # PGAdmin (Database Management)
   pgadmin:
@@ -141,10 +99,6 @@ volumes:
   postgres_data:
   redis_data:
   timescale_data:
-  mqtt_data:
-  mqtt_logs:
-  prometheus_data:
-  grafana_data:
 
 networks:
   default:

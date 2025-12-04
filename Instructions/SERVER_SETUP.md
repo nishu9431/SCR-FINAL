@@ -280,7 +280,3 @@ docker logs -f parkpulse_pgadmin
 ```bash
 docker stats
 ```
-
-### Access Grafana Dashboard:
-- URL: http://localhost:3001
-- Default credentials: admin/admin

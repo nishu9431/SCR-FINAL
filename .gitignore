@@ -99,5 +99,4 @@ temp/
 secrets/
 
 # Monitoring
-prometheus_data/
-grafana_data/
+

@@ -7,7 +7,6 @@
 | **Frontend** | http://localhost:3000/pages/Landing_page.html | - |
 | **Backend API** | http://localhost:8000/docs | - |
 | **pgAdmin** | http://localhost:5050 | admin@parkpulse.com / admin123 |
-| **Grafana** | http://localhost:3001 | admin / admin |
 | **Database** | localhost:5432 | parkpulse / parkpulse123 |
 
 ## Quick Start Commands

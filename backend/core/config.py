@@ -25,12 +25,6 @@ class Settings(BaseSettings):
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
     
-    # MQTT (Edge Gateway)
-    MQTT_BROKER: str = "localhost"
-    MQTT_PORT: int = 1883
-    MQTT_USERNAME: str = ""
-    MQTT_PASSWORD: str = ""
-    
     # Security
     SECRET_KEY: str = "your-secret-key-change-in-production"
     ALGORITHM: str = "HS256"
@@ -70,10 +64,6 @@ class Settings(BaseSettings):
     DYNAMIC_PRICING_ENABLED: bool = True
     MAX_SURGE_MULTIPLIER: float = 2.5
     MIN_SURGE_MULTIPLIER: float = 0.7
-    
-    # Monitoring
-    ENABLE_METRICS: bool = True
-    METRICS_PORT: int = 9090
     
     class Config:
         env_file = ".env"

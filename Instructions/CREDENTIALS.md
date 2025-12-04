@@ -14,11 +14,6 @@
 - **Username**: parkpulse
 - **Password**: parkpulse123
 
-### Grafana (Monitoring)
-- **URL**: http://localhost:3001
-- **Username**: admin
-- **Password**: admin (change on first login)
-
 ### Backend API
 - **URL**: http://localhost:8000
 - **API Docs**: http://localhost:8000/docs
@@ -57,10 +52,8 @@ MAIL_SSL = False
 | Backend API | 8000 | 8000 |
 | PostgreSQL | 5432 | 5432 |
 | pgAdmin | 80 | 5050 |
-| Grafana | 3000 | 3001 |
 | Redis | 6379 | 6379 |
 | TimescaleDB | 5432 | 5433 |
-| Prometheus | 9090 | 9090 |
 
 ## Environment Variables
 

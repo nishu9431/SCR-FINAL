@@ -11,7 +11,6 @@ SMART_PARKING/
 │   ├── js/            # JavaScript files
 │   └── pages/         # HTML pages
 ├── backend/           # FastAPI backend service
-├── monitoring/        # Grafana monitoring
 ├── docker-compose.yml # Docker services configuration
 ├── quickstart.sh      # Quick start script
 └── .env.example       # Environment variables template
@@ -41,7 +40,6 @@ SMART_PARKING/
 - **Backend API**: FastAPI (Port 8000)
 - **Database**: PostgreSQL (Port 5432)
 - **pgAdmin**: Database management (Port 5050)
-- **Grafana**: Monitoring (Port 3001)
 
 ## �� Parking Locations
 
