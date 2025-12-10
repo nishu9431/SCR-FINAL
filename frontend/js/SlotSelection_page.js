@@ -79,29 +79,33 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             container.innerHTML = '<div class="loading-message">Loading available slots...</div>';
             
-            // For now, generate mock slots since booking system isn't fully implemented
-            // All slots will show as AVAILABLE (green) and clickable
-            const totalSlots = available || 20; // Use available count from URL or default to 20
+            // Generate mock slots with both available and booked status
+            const totalSlots = 20; // Total slots in the parking lot
+            const availableCount = available || 12; // Available slots from URL or default
             slots = [];
             
             for (let i = 1; i <= totalSlots; i++) {
                 const zone = i <= 10 ? 'Zone A' : i <= 20 ? 'Zone B' : 'Zone C';
                 const floor = i <= 10 ? 'Ground Floor' : 'First Floor';
                 
+                // First availableCount slots are available, rest are booked
+                const isAvailable = i <= availableCount;
+                
                 slots.push({
                     id: i,
                     slot_number: `${vehicleType === '2wheeler' ? '2W' : vehicleType === '4wheeler' ? '4W' : 'O'}-${String(i).padStart(3, '0')}`,
                     zone: zone,
                     floor: floor,
-                    status: 'AVAILABLE', // All slots shown as available for now
+                    status: isAvailable ? 'AVAILABLE' : 'BOOKED',
                     vehicle_type: vehicleType
                 });
             }
             
-            console.log(`Generated ${slots.length} available slots for ${vehicleType}`);
+            const availableSlots = slots.filter(s => s.status === 'AVAILABLE').length;
+            console.log(`Generated ${slots.length} total slots (${availableSlots} available, ${slots.length - availableSlots} booked) for ${vehicleType}`);
             
-            if (slots.length === 0) {
-                container.innerHTML = '<div class="error-message">No slots available for the selected time and vehicle type.</div>';
+            if (availableSlots === 0) {
+                container.innerHTML = '<div class="error-message">No slots available for the selected time and vehicle type. All slots are currently booked.</div>';
                 return;
             }
             
@@ -136,9 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
             html += `<div class="zone-header">${escapeHtml(zone)}</div>`;
             
             zoneSlots.forEach(slot => {
-                // All slots are available (green) for now
-                const isBooked = false; // Changed: Show all as available
-                const statusClass = 'available'; // All slots shown as available
+                // Show both available and booked slots
+                const isBooked = slot.status === 'BOOKED';
+                const statusClass = isBooked ? 'booked' : 'available';
+                const statusText = isBooked ? 'Booked' : 'Available';
                 
                 html += `
                     <div class="slot-card ${statusClass}" 
@@ -147,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
                          data-slot-zone="${escapeHtml(slot.zone || 'General')}">
                         <div class="slot-number">${escapeHtml(slot.slot_number)}</div>
                         <div class="slot-zone">${escapeHtml(slot.zone || 'General')}</div>
-                        <div class="slot-status">Available</div>
+                        <div class="slot-status">${statusText}</div>
                     </div>
                 `;
             });
@@ -155,7 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         container.innerHTML = html;
         
-        console.log('✅ Rendered', slots.length, 'available slots');
+        const availableSlots = slots.filter(s => s.status === 'AVAILABLE').length;
+        console.log('✅ Rendered', slots.length, 'total slots:', availableSlots, 'available,', (slots.length - availableSlots), 'booked');
     }
     
     function setupEventListeners() {
