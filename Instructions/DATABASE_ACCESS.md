@@ -4,8 +4,8 @@
 
 ### 1. **Access pgAdmin Web Interface**
 - **URL**: http://localhost:5050
-- **Email**: admin@parkpulse.com
-- **Password**: admin123
+- **Email**: admin@parkpulse.io
+- **Password**: admin
 
 ### 2. **Create Server Connection in pgAdmin**
 
@@ -64,7 +64,7 @@ SELECT * FROM parking_lots;
 
 | Service | URL/Host | Username | Password |
 |---------|----------|----------|----------|
-| **pgAdmin** | http://localhost:5050 | admin@parkpulse.com | admin123 |
+| **pgAdmin** | http://localhost:5050 | admin@parkpulse.io | admin |
 | **PostgreSQL** | localhost:5432 | parkpulse | parkpulse123 |
 | **Database Name** | - | parkpulse | - |
 
@@ -82,10 +82,10 @@ docker volume inspect smart_parking_postgres_data
 
 ## Current Database Users
 
-The system has **8 registered users** including:
+The system has **12 registered users** including:
 - ravi@gmail.com
 - tushar@gmail.com
-- (and 6 others)
+- (and 10 others)
 
 ## Backup Database
 

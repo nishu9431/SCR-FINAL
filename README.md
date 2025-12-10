@@ -1,6 +1,6 @@
 # 🅿️ ParkPulse - Smart Parking Platform
 
-Real-time parking availability system for Bengaluru with 8 major parking locations.
+Real-time parking availability system for Bengaluru with 9 major parking locations.
 
 ## 📁 Project Structure
 
@@ -18,14 +18,14 @@ SMART_PARKING/
 
 ## 🚀 Quick Start
 
-1. **Start all services:**
+1. **Start all Docker services:**
    ```bash
-   ./quickstart.sh
+   docker-compose up -d
    ```
 
-2. **Start frontend server:**
+2. **Or use the quickstart script:**
    ```bash
-   cd frontend && python3 -m http.server 3000
+   ./quickstart.sh
    ```
 
 3. **Access the application:**
@@ -41,7 +41,7 @@ SMART_PARKING/
 - **Database**: PostgreSQL (Port 5432)
 - **pgAdmin**: Database management (Port 5050)
 
-## �� Parking Locations
+## 🅿️ Parking Locations
 
 1. MG Road Parking
 2. Forum Mall Parking - Konankunte
@@ -51,9 +51,10 @@ SMART_PARKING/
 6. Garuda Mall - Jayanagar
 7. Royal Meenakshi Mall - Bannerghatta Road
 8. VegaCity - Bannerghatta Road
+9. BMSIT College
 
 ## 🔐 Database Credentials
 
-- **pgAdmin**: admin@parkpulse.com / admin123
+- **pgAdmin**: admin@parkpulse.io / admin
 - **Database**: parkpulse / parkpulse123
 

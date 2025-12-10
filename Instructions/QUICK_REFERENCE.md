@@ -6,16 +6,19 @@
 |---------|-----|-------------|
 | **Frontend** | http://localhost:3000/pages/Landing_page.html | - |
 | **Backend API** | http://localhost:8000/docs | - |
-| **pgAdmin** | http://localhost:5050 | admin@parkpulse.com / admin123 |
+| **pgAdmin** | http://localhost:5050 | admin@parkpulse.io / admin |
 | **Database** | localhost:5432 | parkpulse / parkpulse123 |
 
 ## Quick Start Commands
 
 ```bash
-# Start everything
+# Start all Docker services
+docker-compose up -d
+
+# Start everything with quickstart script
 ./quickstart.sh
 
-# Start frontend only
+# Start frontend only (if not using Docker frontend)
 cd frontend && python3 -m http.server 3000
 
 # Stop frontend
@@ -38,7 +41,7 @@ docker restart parkpulse_backend
 
 ### pgAdmin Setup:
 1. Open http://localhost:5050
-2. Login: admin@parkpulse.com / admin123
+2. Login: admin@parkpulse.io / admin
 3. Add Server:
    - Name: ParkPulse Database
    - Host: `parkpulse_db`
@@ -93,3 +96,4 @@ pip install fastapi uvicorn sqlalchemy pydantic requests
 6. Garuda Mall - Jayanagar
 7. Royal Meenakshi Mall - Bannerghatta Road
 8. VegaCity - Bannerghatta Road
+9. BMSIT College

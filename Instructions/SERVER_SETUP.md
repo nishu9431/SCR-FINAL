@@ -132,7 +132,7 @@ docker exec parkpulse_backend python init_db.py
 
 **Option 1 - pgAdmin** (Recommended):
 - Open http://localhost:5050
-- Login with admin@parkpulse.com / admin123
+- Login with admin@parkpulse.io / admin
 - Register server with host: `parkpulse_db`
 
 **Option 2 - Command Line**:
