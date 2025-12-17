@@ -429,10 +429,56 @@ body {
     padding: 40px 20px;
     font-size: 16px;
     color: var(--body-text);
+    grid-column: 1 / -1;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    grid-column: 1 / -1;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 .error-message {
     color: var(--low-avail);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.error-message i {
+    width: 48px;
+    height: 48px;
+    color: var(--low-avail);
+}
+
+.error-message h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin-top: 8px;
+}
+
+.error-message p {
+    font-size: 15px;
+    color: var(--body-text);
 }
 
 /* Update card footer to remove old Book Now button styles */

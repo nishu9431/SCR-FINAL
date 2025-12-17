@@ -14,7 +14,7 @@ from pathlib import Path
 # Add the backend directory to Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from api.routes import auth, users, lots, bookings, payments, occupancy, predictions, owners, admin, locations
+from api.routes import auth, users, lots, bookings, payments, occupancy, predictions, owners, admin, locations, pricing
 from core.config import settings
 from core.database import engine, Base
 from core.websocket_manager import manager
@@ -125,6 +125,7 @@ app.include_router(occupancy.router, prefix="/v1/occupancy", tags=["Occupancy"])
 app.include_router(predictions.router, prefix="/v1/predictions", tags=["Predictions"])
 app.include_router(owners.router, prefix="/v1/owners", tags=["Owners"])
 app.include_router(admin.router, prefix="/v1/admin", tags=["Admin"])
+app.include_router(pricing.router, prefix="/v1/pricing", tags=["Dynamic Pricing"])
 
 
 # Error handlers

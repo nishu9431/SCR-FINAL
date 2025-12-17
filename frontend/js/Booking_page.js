@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             vehicle_types: {
                 "2wheeler": { available_slots: 8, total_slots: 30, price_per_hour: 18 },
                 "4wheeler": { available_slots: 10, total_slots: 50, price_per_hour: 45 },
-                "others": { available_slots: 2, total_slots: 15, price_per_hour: 38 }
+                "o thers": { available_slots: 2, total_slots: 15, price_per_hour: 38 }
             }
         },
         { 

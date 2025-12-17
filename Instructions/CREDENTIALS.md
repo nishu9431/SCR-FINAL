@@ -2,10 +2,16 @@
 
 ## Service Credentials
 
-### pgAdmin (Database Management)
-- **URL**: http://localhost:5050
+### Admin Portal Login
+- **URL**: http://localhost:3000/pages/Admin_Login.html
 - **Email**: admin@parkpulse.com
 - **Password**: admin123
+- **Dashboard**: http://localhost:3000/pages/Admin_Dashboard.html
+
+### pgAdmin (Database Management)
+- **URL**: http://localhost:5050
+- **Email**: admin@parkpulse.io
+- **Password**: admin
 
 ### PostgreSQL Database
 - **Host**: localhost (or `parkpulse_db` inside Docker)

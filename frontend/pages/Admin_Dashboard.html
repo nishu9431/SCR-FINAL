@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParkPulse - Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/Admin_Dashboard.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <i data-lucide="gauge" class="logo-icon"></i>
+                <h1>ParkPulse Admin</h1>
+            </div>
+            <div class="header-actions">
+                <div class="auto-refresh">
+                    <i data-lucide="refresh-cw" class="refresh-icon"></i>
+                    <span id="lastUpdated">Last updated: --:--</span>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i data-lucide="log-out"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard-main">
+        <!-- Stats Overview -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i data-lucide="map-pin"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalLocations">0</h3>
+                    <p>Total Locations</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i data-lucide="square-parking"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalSlots">0</h3>
+                    <p>Total Parking Slots</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange">
+                    <i data-lucide="car"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="occupiedSlots">0</h3>
+                    <p>Occupied Slots</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i data-lucide="activity"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="occupancyRate">0%</h3>
+                    <p>Occupancy Rate</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vehicle Type Breakdown -->
+        <section class="vehicle-breakdown">
+            <div class="section-header">
+                <h2><i data-lucide="pie-chart"></i> Vehicle Type Distribution</h2>
+            </div>
+            <div class="vehicle-cards">
+                <div class="vehicle-card">
+                    <i data-lucide="bike" class="vehicle-icon"></i>
+                    <h4>2-Wheelers</h4>
+                    <div class="vehicle-stats">
+                        <div class="stat-row">
+                            <span>Total:</span>
+                            <strong id="twoWheelerTotal">0</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>Available:</span>
+                            <strong id="twoWheelerAvailable" class="available">0</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>Occupied:</span>
+                            <strong id="twoWheelerOccupied" class="occupied">0</strong>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="twoWheelerProgress"></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <i data-lucide="car" class="vehicle-icon"></i>
+                    <h4>4-Wheelers</h4>
+                    <div class="vehicle-stats">
+                        <div class="stat-row">
+                            <span>Total:</span>
+                            <strong id="fourWheelerTotal">0</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>Available:</span>
+                            <strong id="fourWheelerAvailable" class="available">0</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>Occupied:</span>
+                            <strong id="fourWheelerOccupied" class="occupied">0</strong>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="fourWheelerProgress"></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <i data-lucide="truck" class="vehicle-icon"></i>
+                    <h4>Commercial</h4>
+                    <div class="vehicle-stats">
+                        <div class="stat-row">
+                            <span>Total:</span>
+                            <strong id="othersTotal">0</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>Available:</span>
+                            <strong id="othersAvailable" class="available">0</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>Occupied:</span>
+                            <strong id="othersOccupied" class="occupied">0</strong>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="othersProgress"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Location-wise Availability -->
+        <section class="locations-section">
+            <div class="section-header">
+                <h2><i data-lucide="building"></i> Location-wise Slot Availability</h2>
+                <button class="refresh-btn" onclick="refreshData()">
+                    <i data-lucide="refresh-cw"></i>
+                    Refresh
+                </button>
+            </div>
+            <div class="locations-table-container">
+                <table class="locations-table">
+                    <thead>
+                        <tr>
+                            <th>Location Name</th>
+                            <th>Address</th>
+                            <th>2-Wheeler</th>
+                            <th>4-Wheeler</th>
+                            <th>Commercial</th>
+                            <th>Total Available</th>
+                            <th>Occupancy</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="locationsTableBody">
+                        <tr>
+                            <td colspan="8" class="loading-cell">
+                                <div class="loading-spinner"></div>
+                                Loading locations...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Recent Bookings -->
+        <section class="bookings-section">
+            <div class="section-header">
+                <h2><i data-lucide="clock"></i> Recent Bookings</h2>
+                <select id="bookingFilter" onchange="filterBookings()">
+                    <option value="all">All Bookings</option>
+                    <option value="active">Active</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+            <div class="bookings-grid" id="bookingsGrid">
+                <div class="loading-cell">
+                    <div class="loading-spinner"></div>
+                    Loading recent bookings...
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="../js/Admin_Dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmed - ParkPulse</title>
+    <link rel="stylesheet" href="../css/BookingConfirmation_page.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="Booking_page.html" class="nav-logo">
+                <i data-lucide="car"></i>
+                <span>ParkPulse</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="confirmation-main">
+        <div class="container">
+            <div class="confirmation-card">
+                <div class="success-animation">
+                    <div class="checkmark-circle">
+                        <i data-lucide="check" class="checkmark-icon"></i>
+                    </div>
+                </div>
+
+                <h1 class="confirmation-title">Booking Confirmed!</h1>
+                <p class="confirmation-subtitle">Your parking slot has been reserved successfully</p>
+
+                <div class="booking-details-card">
+                    <h2>Booking Details</h2>
+                    
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i data-lucide="hash"></i>
+                                <span>Booking ID</span>
+                            </div>
+                            <div class="detail-value" id="booking-id">Loading...</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i data-lucide="map-pin"></i>
+                                <span>Location</span>
+                            </div>
+                            <div class="detail-value" id="location-name">Loading...</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i data-lucide="square-parking"></i>
+                                <span>Slot Number</span>
+                            </div>
+                            <div class="detail-value" id="slot-number">Loading...</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i data-lucide="layers"></i>
+                                <span>Zone</span>
+                            </div>
+                            <div class="detail-value" id="zone">Loading...</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i data-lucide="car"></i>
+                                <span>Vehicle Type</span>
+                            </div>
+                            <div class="detail-value" id="vehicle-type">Loading...</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i data-lucide="clock"></i>
+                                <span>Start Time</span>
+                            </div>
+                            <div class="detail-value" id="start-time">Loading...</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i data-lucide="clock"></i>
+                                <span>End Time</span>
+                            </div>
+                            <div class="detail-value" id="end-time">Loading...</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i data-lucide="timer"></i>
+                                <span>Duration</span>
+                            </div>
+                            <div class="detail-value" id="duration">Loading...</div>
+                        </div>
+
+                        <div class="detail-item highlight">
+                            <div class="detail-label">
+                                <i data-lucide="indian-rupee"></i>
+                                <span>Total Amount</span>
+                            </div>
+                            <div class="detail-value total" id="total-amount">₹0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="next-steps-card">
+                    <h3>What's Next?</h3>
+                    <ul class="steps-list">
+                        <li>
+                            <i data-lucide="mail"></i>
+                            <span>A confirmation email has been sent to your registered email address</span>
+                        </li>
+                        <li>
+                            <i data-lucide="smartphone"></i>
+                            <span>Show your booking ID at the parking entrance</span>
+                        </li>
+                        <li>
+                            <i data-lucide="clock-3"></i>
+                            <span>Arrive 5 minutes before your booking start time</span>
+                        </li>
+                        <li>
+                            <i data-lucide="navigation"></i>
+                            <span>Follow the signs to locate your designated parking zone</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="window.location.href='Booking_page.html'">
+                        <i data-lucide="calendar-plus"></i>
+                        Book Another Slot
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.print()">
+                        <i data-lucide="printer"></i>
+                        Print Confirmation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-container">
+            <p>&copy; 2025 Parking Made Easy</p>
+            <div class="footer-links">
+                <a href="#">Terms</a>
+                <a href="#">Privacy</a>
+                <a href="#">Contact</a>
+                <a href="#">Help</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/BookingConfirmation_page.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

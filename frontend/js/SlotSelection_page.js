@@ -268,11 +268,19 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const booking = await response.json();
             
-            // Show success message
-            alert(`Booking confirmed! Your slot ${selectedSlot.dataset.slotNumber} is reserved.`);
+            // Redirect to confirmation page with booking details
+            const confirmationParams = new URLSearchParams({
+                bookingId: booking.id,
+                locationName: locationName,
+                slotNumber: selectedSlot.dataset.slotNumber,
+                zone: selectedSlot.dataset.slotZone,
+                vehicleType: vehicleType,
+                startTime: startTime,
+                endTime: endTime,
+                totalAmount: Math.round(price * window.bookingDuration)
+            });
             
-            // Redirect to bookings page or confirmation page
-            window.location.href = 'Booking_page.html';
+            window.location.href = `BookingConfirmation_page.html?${confirmationParams.toString()}`;
             
         } catch (error) {
             console.error('Booking error:', error);

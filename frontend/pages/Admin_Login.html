@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - ParkPulse</title>
+    <link rel="stylesheet" href="../css/Admin_Login.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Left Panel - Branding -->
+        <div class="branding-panel">
+            <div class="branding-content">
+                <div class="logo-section">
+                    <i data-lucide="shield-check" class="logo-icon"></i>
+                    <h1>ParkPulse</h1>
+                    <span class="admin-badge">ADMIN PORTAL</span>
+                </div>
+                
+                <div class="features">
+                    <div class="feature-item">
+                        <i data-lucide="gauge"></i>
+                        <div>
+                            <h3>Real-time Monitoring</h3>
+                            <p>Track parking availability across all locations</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i data-lucide="activity"></i>
+                        <div>
+                            <h3>Live Analytics</h3>
+                            <p>View occupancy rates and booking trends</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i data-lucide="users"></i>
+                        <div>
+                            <h3>User Management</h3>
+                            <p>Manage users, bookings, and operations</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i data-lucide="bar-chart-3"></i>
+                        <div>
+                            <h3>Business Insights</h3>
+                            <p>Generate reports and analyze performance</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="security-notice">
+                    <i data-lucide="lock"></i>
+                    <span>Secure admin access with end-to-end encryption</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Login Form -->
+        <div class="login-panel">
+            <div class="login-content">
+                <div class="login-header">
+                    <i data-lucide="shield-check" class="header-icon"></i>
+                    <h2>Administrator Login</h2>
+                    <p>Sign in to access the admin dashboard</p>
+                </div>
+
+                <form id="adminLoginForm" class="login-form">
+                    <div class="alert-message" id="alertMessage" style="display: none;"></div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i data-lucide="mail"></i>
+                            Email Address
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="admin@parkpulse.com"
+                            required
+                            autocomplete="username"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">
+                            <i data-lucide="lock"></i>
+                            Password
+                        </label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Enter your password"
+                                required
+                                autocomplete="current-password"
+                            >
+                            <button type="button" class="toggle-password" onclick="togglePassword()">
+                                <i data-lucide="eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="rememberMe">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="login-btn" id="loginBtn">
+                        <span class="btn-text">Sign In</span>
+                        <div class="btn-loader" style="display: none;"></div>
+                    </button>
+
+                    <div class="divider">
+                        <span>OR</span>
+                    </div>
+
+                    <button type="button" class="google-login-btn" onclick="loginWithGoogle()">
+                        <svg class="google-icon" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Sign in with Google
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    <p>
+                        Not an admin? 
+                        <a href="Login_page.html">User Login</a>
+                    </p>
+                </div>
+
+                <div class="support-links">
+                    <a href="#"><i data-lucide="help-circle"></i> Help Center</a>
+                    <a href="#"><i data-lucide="mail"></i> Contact Support</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="../js/Admin_Login.js"></script>
+</body>
+</html>
