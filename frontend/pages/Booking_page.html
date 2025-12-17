@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ParkPulse</title>
-    <link rel="stylesheet" href="../css/Booking_page.css?v=20251204">
+    <title>Park Made Easy</title>
+    <link rel="stylesheet" href="../css/Booking_page.css?v=20251217e">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="../js/Booking_page.js?v=20251204" defer></script>
+    <script src="../js/Booking_page.js?v=20251217e" defer></script>
 </head>
 <body>
 
@@ -14,7 +14,7 @@
         <div class="container">
             <a href="Landing_page.html" class="nav-logo">
                 <i data-lucide="car"></i>
-                <span>ParkPulse</span>
+                <span>Park Made Easy</span>
             </a>
             <div class="search-bar">
                 <i data-lucide="search" class="search-icon"></i>
@@ -28,6 +28,17 @@
                         <i data-lucide="chevron-down" class="chevron-icon"></i>
                     </button>
                     <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="profile-info" id="profileInfo">
+                            <div class="profile-avatar">
+                                <i data-lucide="user" class="avatar-icon"></i>
+                            </div>
+                            <div class="profile-details">
+                                <div class="profile-name" id="profileName">Loading...</div>
+                                <div class="profile-email" id="profileEmail">Loading...</div>
+                                <div class="profile-phone" id="profilePhone">Loading...</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
                         <a href="#" class="dropdown-item" onclick="showBookings(event)">
                             <i data-lucide="calendar"></i>
                             <span>Previous Bookings</span>

@@ -253,6 +253,18 @@ body {
     color: var(--dark-text);
 }
 
+.slot-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #FF6B35;
+    color: white;
+    margin: 4px 0;
+    display: inline-block;
+}
+
 .slot-card.selected .slot-number,
 .slot-card.selected .slot-zone {
     color: white;

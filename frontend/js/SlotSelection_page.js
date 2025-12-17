@@ -45,9 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('info-location').textContent = locationName || 'N/A';
         
         const vehicleTypeDisplay = {
-            '2wheeler': '2 Wheeler 🏍️',
-            '4wheeler': '4 Wheeler 🚗',
-            'others': 'Others (Bus/Truck) 🚐'
+            '2wheeler': '2 Wheeler',
+            '4wheeler': '4 Wheeler',
+            'auto_truck': 'Auto/Truck'
         };
         document.getElementById('info-vehicle').textContent = vehicleTypeDisplay[vehicleType] || vehicleType;
         
@@ -79,36 +79,78 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             container.innerHTML = '<div class="loading-message">Loading available slots...</div>';
             
-            // Generate mock slots with both available and booked status
-            const totalSlots = 20; // Total slots in the parking lot
+            // Get additional data from URL parameters
+            const evSlots = parseInt(urlParams.get('data-ev-slots')) || 0;
+            const autoSlots = parseInt(urlParams.get('data-auto-slots')) || 0;
+            const truckSlots = parseInt(urlParams.get('data-truck-slots')) || 0;
+            const totalFromUrl = parseInt(urlParams.get('data-total')) || 0;
+            
+            // Determine total slots based on vehicle type
+            let totalSlots;
+            if (vehicleType === '2wheeler') {
+                totalSlots = 40;
+            } else if (vehicleType === '4wheeler') {
+                totalSlots = 25;
+            } else if (vehicleType === 'auto_truck') {
+                totalSlots = 30;
+            } else {
+                totalSlots = totalFromUrl || 20;
+            }
+            
             const availableCount = available || 12; // Available slots from URL or default
             slots = [];
             
             for (let i = 1; i <= totalSlots; i++) {
-                const zone = i <= 10 ? 'Zone A' : i <= 20 ? 'Zone B' : 'Zone C';
-                const floor = i <= 10 ? 'Ground Floor' : 'First Floor';
+                const zone = i <= Math.floor(totalSlots / 3) ? 'Zone A' : i <= Math.floor(totalSlots * 2 / 3) ? 'Zone B' : 'Zone C';
+                const floor = i <= Math.floor(totalSlots / 2) ? 'Ground Floor' : 'First Floor';
                 
                 // First availableCount slots are available, rest are booked
                 const isAvailable = i <= availableCount;
                 
+                // Determine if slot is EV, Auto, or Truck
+                let slotLabel = '';
+                let slotPrefix = '';
+                
+                if (vehicleType === '2wheeler') {
+                    slotPrefix = '2W';
+                    // Last 20 slots (21-40) are EV slots
+                    if (i > 20) {
+                        slotLabel = 'EV';
+                    }
+                } else if (vehicleType === '4wheeler') {
+                    slotPrefix = '4W';
+                    // Last 10 slots (16-25) are EV slots
+                    if (i > 15) {
+                        slotLabel = 'EV';
+                    }
+                } else if (vehicleType === 'auto_truck') {
+                    // First 15 slots are Auto, next 15 are Truck
+                    if (i <= 15) {
+                        slotPrefix = 'AUTO';
+                        slotLabel = 'Auto';
+                    } else {
+                        slotPrefix = 'TRUCK';
+                        slotLabel = 'Truck';
+                    }
+                } else {
+                    slotPrefix = 'O';
+                }
+                
                 slots.push({
                     id: i,
-                    slot_number: `${vehicleType === '2wheeler' ? '2W' : vehicleType === '4wheeler' ? '4W' : 'O'}-${String(i).padStart(3, '0')}`,
+                    slot_number: `${slotPrefix}-${String(i).padStart(3, '0')}`,
                     zone: zone,
                     floor: floor,
                     status: isAvailable ? 'AVAILABLE' : 'BOOKED',
-                    vehicle_type: vehicleType
+                    vehicle_type: vehicleType,
+                    label: slotLabel
                 });
             }
             
             const availableSlots = slots.filter(s => s.status === 'AVAILABLE').length;
             console.log(`Generated ${slots.length} total slots (${availableSlots} available, ${slots.length - availableSlots} booked) for ${vehicleType}`);
             
-            if (availableSlots === 0) {
-                container.innerHTML = '<div class="error-message">No slots available for the selected time and vehicle type. All slots are currently booked.</div>';
-                return;
-            }
-            
+            // Always render slots - even if all are booked, user should see them
             renderSlots();
             
         } catch (error) {
@@ -144,6 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isBooked = slot.status === 'BOOKED';
                 const statusClass = isBooked ? 'booked' : 'available';
                 const statusText = isBooked ? 'Booked' : 'Available';
+                const labelDisplay = slot.label ? `<div class="slot-label">${escapeHtml(slot.label)}</div>` : '';
                 
                 html += `
                     <div class="slot-card ${statusClass}" 
@@ -151,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
                          data-slot-number="${escapeHtml(slot.slot_number)}"
                          data-slot-zone="${escapeHtml(slot.zone || 'General')}">
                         <div class="slot-number">${escapeHtml(slot.slot_number)}</div>
+                        ${labelDisplay}
                         <div class="slot-zone">${escapeHtml(slot.zone || 'General')}</div>
                         <div class="slot-status">${statusText}</div>
                     </div>
@@ -162,6 +206,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const availableSlots = slots.filter(s => s.status === 'AVAILABLE').length;
         console.log('✅ Rendered', slots.length, 'total slots:', availableSlots, 'available,', (slots.length - availableSlots), 'booked');
+        
+        // Show message if all slots are booked
+        if (availableSlots === 0) {
+            const noAvailableMsg = document.createElement('div');
+            noAvailableMsg.className = 'error-message';
+            noAvailableMsg.style.marginTop = '20px';
+            noAvailableMsg.textContent = '⚠️ All slots are currently booked for this time period. Please select a different time.';
+            container.appendChild(noAvailableMsg);
+        }
     }
     
     function setupEventListeners() {
@@ -238,6 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         const slotId = selectedSlot.dataset.slotId;
+        const slotNumber = selectedSlot.dataset.slotNumber;
         const button = document.getElementById('confirm-booking');
         const originalText = button.innerHTML;
         
@@ -246,19 +300,25 @@ document.addEventListener('DOMContentLoaded', () => {
             button.disabled = true;
             button.innerHTML = '<i data-lucide="loader" class="spin"></i> Processing...';
             
-            // Create booking
+            // Prepare booking data
+            const bookingData = {
+                lot_id: parseInt(locationId),
+                slot_id: parseInt(slotId),
+                start_time: new Date(startTime).toISOString(),
+                end_time: new Date(endTime).toISOString(),
+                vehicle_type: vehicleType
+            };
+            
+            console.log('Creating booking:', bookingData);
+            
+            // Create booking via API
             const response = await fetch(`${API_BASE}/bookings`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    slot_id: parseInt(slotId),
-                    start_time: startTime,
-                    end_time: endTime,
-                    vehicle_type: vehicleType
-                })
+                body: JSON.stringify(bookingData)
             });
             
             if (!response.ok) {
@@ -268,19 +328,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const booking = await response.json();
             
-            // Redirect to confirmation page with booking details
-            const confirmationParams = new URLSearchParams({
-                bookingId: booking.id,
-                locationName: locationName,
-                slotNumber: selectedSlot.dataset.slotNumber,
-                zone: selectedSlot.dataset.slotZone,
-                vehicleType: vehicleType,
-                startTime: startTime,
-                endTime: endTime,
-                totalAmount: Math.round(price * window.bookingDuration)
-            });
+            console.log('Booking created successfully:', booking);
             
-            window.location.href = `BookingConfirmation_page.html?${confirmationParams.toString()}`;
+            // Show detailed success message
+            showBookingConfirmation(booking, slotNumber);
             
         } catch (error) {
             console.error('Booking error:', error);
@@ -295,6 +346,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.lucide.createIcons();
             }
         }
+    }
+    
+    function showBookingConfirmation(booking, slotNumber) {
+        // Create confirmation modal/message
+        const duration = window.bookingDuration || 0;
+        const totalCost = Math.round(price * duration);
+        
+        const confirmationHTML = `
+            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                <div style="background: white; padding: 40px; border-radius: 16px; max-width: 500px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                    <div style="font-size: 60px; color: #10B981; margin-bottom: 20px;">✓</div>
+                    <h2 style="color: #1a1a1a; margin: 0 0 16px 0;">Booking Confirmed!</h2>
+                    <div style="background: #F0FDF4; padding: 20px; border-radius: 12px; margin: 20px 0; text-align: left;">
+                        <p style="margin: 8px 0; color: #166534;"><strong>Booking ID:</strong> ${booking.booking_number || booking.id}</p>
+                        <p style="margin: 8px 0; color: #166534;"><strong>Location:</strong> ${locationName}</p>
+                        <p style="margin: 8px 0; color: #166534;"><strong>Slot:</strong> ${slotNumber}</p>
+                        <p style="margin: 8px 0; color: #166534;"><strong>Vehicle Type:</strong> ${vehicleType === '2wheeler' ? '2 Wheeler' : vehicleType === '4wheeler' ? '4 Wheeler' : 'Auto/Truck'}</p>
+                        <p style="margin: 8px 0; color: #166534;"><strong>Duration:</strong> ${duration} hours</p>
+                        <p style="margin: 8px 0; color: #166534;"><strong>Total Cost:</strong> ₹${totalCost}</p>
+                        <p style="margin: 8px 0; color: #166534;"><strong>Status:</strong> ${booking.status || 'CONFIRMED'}</p>
+                    </div>
+                    <p style="color: #666; margin: 20px 0;">Your parking slot has been reserved. You will receive a confirmation email shortly.</p>
+                    <button onclick="window.location.href='Booking_page.html'" style="background: #10B981; color: white; border: none; padding: 14px 32px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px;">
+                        Back to Bookings
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', confirmationHTML);
     }
     
     function escapeHtml(str) {

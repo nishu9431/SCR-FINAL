@@ -44,9 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
             distance: "2.5 km away",
             rating: 4.5,
             vehicle_types: {
-                "2wheeler": { available_slots: 5, total_slots: 20, price_per_hour: 20 },
-                "4wheeler": { available_slots: 8, total_slots: 30, price_per_hour: 50 },
-                "others": { available_slots: 2, total_slots: 10, price_per_hour: 40 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 20 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 50 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 40 }
             }
         },
         { 
@@ -59,9 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
             distance: "5.2 km away",
             rating: 4.2,
             vehicle_types: {
-                "2wheeler": { available_slots: 3, total_slots: 15, price_per_hour: 15 },
-                "4wheeler": { available_slots: 5, total_slots: 25, price_per_hour: 45 },
-                "others": { available_slots: 0, total_slots: 8, price_per_hour: 35 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 15 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 45 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 35 }
             }
         },
         { 
@@ -74,9 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
             distance: "3.8 km away",
             rating: 4.6,
             vehicle_types: {
-                "2wheeler": { available_slots: 1, total_slots: 10, price_per_hour: 25 },
-                "4wheeler": { available_slots: 2, total_slots: 20, price_per_hour: 60 },
-                "others": { available_slots: 0, total_slots: 5, price_per_hour: 50 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 25 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 60 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 50 }
             }
         },
         { 
@@ -89,9 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
             distance: "4.1 km away",
             rating: 4.3,
             vehicle_types: {
-                "2wheeler": { available_slots: 4, total_slots: 15, price_per_hour: 20 },
-                "4wheeler": { available_slots: 6, total_slots: 25, price_per_hour: 50 },
-                "others": { available_slots: 2, total_slots: 8, price_per_hour: 40 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 20 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 50 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 40 }
             }
         },
         { 
@@ -104,9 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
             distance: "8.5 km away",
             rating: 4.7,
             vehicle_types: {
-                "2wheeler": { available_slots: 8, total_slots: 30, price_per_hour: 18 },
-                "4wheeler": { available_slots: 10, total_slots: 50, price_per_hour: 45 },
-                "o thers": { available_slots: 2, total_slots: 15, price_per_hour: 38 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 18 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 45 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 38 }
             }
         },
         { 
@@ -119,9 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
             distance: "6.3 km away",
             rating: 4.4,
             vehicle_types: {
-                "2wheeler": { available_slots: 2, total_slots: 12, price_per_hour: 22 },
-                "4wheeler": { available_slots: 3, total_slots: 20, price_per_hour: 55 },
-                "others": { available_slots: 1, total_slots: 6, price_per_hour: 45 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 22 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 55 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 45 }
             }
         },
         { 
@@ -134,9 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
             distance: "7.2 km away",
             rating: 4.5,
             vehicle_types: {
-                "2wheeler": { available_slots: 6, total_slots: 25, price_per_hour: 20 },
-                "4wheeler": { available_slots: 10, total_slots: 40, price_per_hour: 48 },
-                "others": { available_slots: 2, total_slots: 12, price_per_hour: 40 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 20 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 48 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 40 }
             }
         },
         { 
@@ -149,9 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
             distance: "7.8 km away",
             rating: 4.1,
             vehicle_types: {
-                "2wheeler": { available_slots: 1, total_slots: 8, price_per_hour: 18 },
-                "4wheeler": { available_slots: 2, total_slots: 15, price_per_hour: 45 },
-                "others": { available_slots: 1, total_slots: 5, price_per_hour: 38 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 18 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 45 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 38 }
             }
         },
         { 
@@ -164,9 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
             distance: "9.2 km away",
             rating: 4.6,
             vehicle_types: {
-                "2wheeler": { available_slots: 12, total_slots: 40, price_per_hour: 15 },
-                "4wheeler": { available_slots: 10, total_slots: 35, price_per_hour: 40 },
-                "others": { available_slots: 3, total_slots: 10, price_per_hour: 30 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 15 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 40 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 30 }
             }
         }
     ];
@@ -241,10 +241,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const vehicleTypes = lot.vehicle_types || {};
             const twoWheeler = vehicleTypes["2wheeler"] || {};
             const fourWheeler = vehicleTypes["4wheeler"] || {};
-            const others = vehicleTypes["others"] || {};
+            const autoTruck = vehicleTypes["auto_truck"] || {};
             
             // For now, show all slots as available (booking logic not yet implemented)
-            const totalAvailable = (twoWheeler.available_slots || 0) + (fourWheeler.available_slots || 0) + (others.available_slots || 0);
+            const totalAvailable = (twoWheeler.available_slots || 0) + (fourWheeler.available_slots || 0) + (autoTruck.available_slots || 0);
             const availability = getAvailability(totalAvailable);
             const availClass = availability === AVAILABILITY_CONFIG.high ? 'high' : (availability === AVAILABILITY_CONFIG.medium ? 'mid' : 'low');
             const availCss = availability === AVAILABILITY_CONFIG.high ? 'av-high' : (availability === AVAILABILITY_CONFIG.medium ? 'av-mid' : 'av-low');
@@ -273,59 +273,29 @@ document.addEventListener('DOMContentLoaded', () => {
                   </div>
                   
                   <div class="vehicle-type-options">
-                    ${twoWheeler.available_slots > 0 ? `
-                    <button class="vehicle-btn two-wheeler" data-vehicle-type="2wheeler" data-price="${twoWheeler.price_per_hour || 0}" data-available="${twoWheeler.available_slots}">
-                      <span class="vehicle-icon">🏍️</span>
+                    <button class="vehicle-btn two-wheeler ${twoWheeler.available_slots === 0 ? 'disabled' : ''}" data-vehicle-type="2wheeler" data-price="${twoWheeler.price_per_hour || 0}" data-available="${twoWheeler.available_slots || 0}" data-ev-slots="${twoWheeler.ev_slots || 0}" data-total="${twoWheeler.total_slots || 0}">
+                      <span class="vehicle-icon"></span>
                       <div class="vehicle-info">
                         <div class="vehicle-label">2 Wheeler</div>
-                        <div class="vehicle-details">₹${twoWheeler.price_per_hour || 0}/hr • ${twoWheeler.available_slots} slots available</div>
+                        <div class="vehicle-details">₹${twoWheeler.price_per_hour || 0}/hr • ${twoWheeler.available_slots > 0 ? twoWheeler.available_slots + ' slots available' : 'Fully booked'}</div>
                       </div>
                     </button>
-                    ` : `
-                    <button class="vehicle-btn two-wheeler disabled" disabled>
-                      <span class="vehicle-icon">🏍️</span>
-                      <div class="vehicle-info">
-                        <div class="vehicle-label">2 Wheeler</div>
-                        <div class="vehicle-details">₹${twoWheeler.price_per_hour || 0}/hr • Fully booked</div>
-                      </div>
-                    </button>
-                    `}
                     
-                    ${fourWheeler.available_slots > 0 ? `
-                    <button class="vehicle-btn four-wheeler" data-vehicle-type="4wheeler" data-price="${fourWheeler.price_per_hour || 0}" data-available="${fourWheeler.available_slots}">
-                      <span class="vehicle-icon">🚗</span>
+                    <button class="vehicle-btn four-wheeler ${fourWheeler.available_slots === 0 ? 'disabled' : ''}" data-vehicle-type="4wheeler" data-price="${fourWheeler.price_per_hour || 0}" data-available="${fourWheeler.available_slots || 0}" data-ev-slots="${fourWheeler.ev_slots || 0}" data-total="${fourWheeler.total_slots || 0}">
+                      <span class="vehicle-icon"></span>
                       <div class="vehicle-info">
                         <div class="vehicle-label">4 Wheeler</div>
-                        <div class="vehicle-details">₹${fourWheeler.price_per_hour || 0}/hr • ${fourWheeler.available_slots} slots available</div>
+                        <div class="vehicle-details">₹${fourWheeler.price_per_hour || 0}/hr • ${fourWheeler.available_slots > 0 ? fourWheeler.available_slots + ' slots available' : 'Fully booked'}</div>
                       </div>
                     </button>
-                    ` : `
-                    <button class="vehicle-btn four-wheeler disabled" disabled>
-                      <span class="vehicle-icon">🚗</span>
-                      <div class="vehicle-info">
-                        <div class="vehicle-label">4 Wheeler</div>
-                        <div class="vehicle-details">₹${fourWheeler.price_per_hour || 0}/hr • Fully booked</div>
-                      </div>
-                    </button>
-                    `}
                     
-                    ${others.available_slots > 0 ? `
-                    <button class="vehicle-btn others" data-vehicle-type="others" data-price="${others.price_per_hour || 0}" data-available="${others.available_slots}">
-                      <span class="vehicle-icon">🚐</span>
+                    <button class="vehicle-btn others ${autoTruck.available_slots === 0 ? 'disabled' : ''}" data-vehicle-type="auto_truck" data-price="${autoTruck.price_per_hour || 0}" data-available="${autoTruck.available_slots || 0}" data-auto-slots="${autoTruck.auto_slots || 0}" data-truck-slots="${autoTruck.truck_slots || 0}" data-total="${autoTruck.total_slots || 0}">
+                      <span class="vehicle-icon"></span>
                       <div class="vehicle-info">
-                        <div class="vehicle-label">Others</div>
-                        <div class="vehicle-details">₹${others.price_per_hour || 0}/hr • ${others.available_slots} slots available</div>
+                        <div class="vehicle-label">Auto/Truck</div>
+                        <div class="vehicle-details">₹${autoTruck.price_per_hour || 0}/hr • ${autoTruck.available_slots > 0 ? autoTruck.available_slots + ' slots available' : 'Fully booked'}</div>
                       </div>
                     </button>
-                    ` : `
-                    <button class="vehicle-btn others disabled" disabled>
-                      <span class="vehicle-icon">🚐</span>
-                      <div class="vehicle-info">
-                        <div class="vehicle-label">Others</div>
-                        <div class="vehicle-details">₹${others.price_per_hour || 0}/hr • Fully booked</div>
-                      </div>
-                    </button>
-                    `}
                   </div>
                 </div>
               </article>
@@ -363,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
     /******** event wiring for vehicle type buttons ********/
     document.addEventListener('click', function(e){
-      const btn = e.target.closest && e.target.closest('.vehicle-btn:not(.disabled)');
+      const btn = e.target.closest && e.target.closest('.vehicle-btn');
       if (!btn) return;
       const card = btn.closest('.pme-card');
       if (!card) return;
@@ -401,6 +371,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Profile dropdown functions
   function initializeUserProfile() {
+      // Fetch user profile data
+      fetchUserProfile();
+      
       // Toggle dropdown
       const profileButton = document.getElementById('profileButton');
       const dropdownMenu = document.getElementById('dropdownMenu');
@@ -421,6 +394,44 @@ document.addEventListener('DOMContentLoaded', () => {
       dropdownMenu.addEventListener('click', (e) => {
           e.stopPropagation();
       });
+  }
+  
+  async function fetchUserProfile() {
+      const token = localStorage.getItem('access_token');
+      
+      if (!token) {
+          document.getElementById('profileName').textContent = 'Guest User';
+          document.getElementById('profileEmail').textContent = 'Not logged in';
+          document.getElementById('profilePhone').textContent = 'N/A';
+          return;
+      }
+      
+      try {
+          const response = await fetch('http://localhost:8000/v1/users/profile', {
+              method: 'GET',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+              }
+          });
+          
+          if (response.ok) {
+              const userData = await response.json();
+              document.getElementById('profileName').textContent = userData.full_name || 'User';
+              document.getElementById('profileEmail').textContent = userData.email || 'N/A';
+              document.getElementById('profilePhone').textContent = userData.phone || 'Not provided';
+          } else {
+              console.error('Failed to fetch profile:', response.status);
+              document.getElementById('profileName').textContent = 'Unknown User';
+              document.getElementById('profileEmail').textContent = 'Error loading email';
+              document.getElementById('profilePhone').textContent = 'Error loading phone';
+          }
+      } catch (error) {
+          console.error('Error fetching profile:', error);
+          document.getElementById('profileName').textContent = 'Error';
+          document.getElementById('profileEmail').textContent = 'Unable to load';
+          document.getElementById('profilePhone').textContent = 'Unable to load';
+      }
   }
   
   function showBookings(e) {
