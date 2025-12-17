@@ -104,11 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const availableSlots = slots.filter(s => s.status === 'AVAILABLE').length;
             console.log(`Generated ${slots.length} total slots (${availableSlots} available, ${slots.length - availableSlots} booked) for ${vehicleType}`);
             
-            if (availableSlots === 0) {
-                container.innerHTML = '<div class="error-message">No slots available for the selected time and vehicle type. All slots are currently booked.</div>';
-                return;
-            }
-            
+            // Always render slots - even if all are booked, user should see them
             renderSlots();
             
         } catch (error) {
@@ -162,6 +158,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const availableSlots = slots.filter(s => s.status === 'AVAILABLE').length;
         console.log('✅ Rendered', slots.length, 'total slots:', availableSlots, 'available,', (slots.length - availableSlots), 'booked');
+        
+        // Show message if all slots are booked
+        if (availableSlots === 0) {
+            const noAvailableMsg = document.createElement('div');
+            noAvailableMsg.className = 'error-message';
+            noAvailableMsg.style.marginTop = '20px';
+            noAvailableMsg.textContent = '⚠️ All slots are currently booked for this time period. Please select a different time.';
+            container.appendChild(noAvailableMsg);
+        }
     }
     
     function setupEventListeners() {

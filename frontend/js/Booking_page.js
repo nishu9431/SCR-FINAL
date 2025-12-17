@@ -273,59 +273,29 @@ document.addEventListener('DOMContentLoaded', () => {
                   </div>
                   
                   <div class="vehicle-type-options">
-                    ${twoWheeler.available_slots > 0 ? `
-                    <button class="vehicle-btn two-wheeler" data-vehicle-type="2wheeler" data-price="${twoWheeler.price_per_hour || 0}" data-available="${twoWheeler.available_slots}">
+                    <button class="vehicle-btn two-wheeler ${twoWheeler.available_slots === 0 ? 'disabled' : ''}" data-vehicle-type="2wheeler" data-price="${twoWheeler.price_per_hour || 0}" data-available="${twoWheeler.available_slots || 0}">
                       <span class="vehicle-icon">🏍️</span>
                       <div class="vehicle-info">
                         <div class="vehicle-label">2 Wheeler</div>
-                        <div class="vehicle-details">₹${twoWheeler.price_per_hour || 0}/hr • ${twoWheeler.available_slots} slots available</div>
+                        <div class="vehicle-details">₹${twoWheeler.price_per_hour || 0}/hr • ${twoWheeler.available_slots > 0 ? twoWheeler.available_slots + ' slots available' : 'Fully booked'}</div>
                       </div>
                     </button>
-                    ` : `
-                    <button class="vehicle-btn two-wheeler disabled" disabled>
-                      <span class="vehicle-icon">🏍️</span>
-                      <div class="vehicle-info">
-                        <div class="vehicle-label">2 Wheeler</div>
-                        <div class="vehicle-details">₹${twoWheeler.price_per_hour || 0}/hr • Fully booked</div>
-                      </div>
-                    </button>
-                    `}
                     
-                    ${fourWheeler.available_slots > 0 ? `
-                    <button class="vehicle-btn four-wheeler" data-vehicle-type="4wheeler" data-price="${fourWheeler.price_per_hour || 0}" data-available="${fourWheeler.available_slots}">
+                    <button class="vehicle-btn four-wheeler ${fourWheeler.available_slots === 0 ? 'disabled' : ''}" data-vehicle-type="4wheeler" data-price="${fourWheeler.price_per_hour || 0}" data-available="${fourWheeler.available_slots || 0}">
                       <span class="vehicle-icon">🚗</span>
                       <div class="vehicle-info">
                         <div class="vehicle-label">4 Wheeler</div>
-                        <div class="vehicle-details">₹${fourWheeler.price_per_hour || 0}/hr • ${fourWheeler.available_slots} slots available</div>
+                        <div class="vehicle-details">₹${fourWheeler.price_per_hour || 0}/hr • ${fourWheeler.available_slots > 0 ? fourWheeler.available_slots + ' slots available' : 'Fully booked'}</div>
                       </div>
                     </button>
-                    ` : `
-                    <button class="vehicle-btn four-wheeler disabled" disabled>
-                      <span class="vehicle-icon">🚗</span>
-                      <div class="vehicle-info">
-                        <div class="vehicle-label">4 Wheeler</div>
-                        <div class="vehicle-details">₹${fourWheeler.price_per_hour || 0}/hr • Fully booked</div>
-                      </div>
-                    </button>
-                    `}
                     
-                    ${others.available_slots > 0 ? `
-                    <button class="vehicle-btn others" data-vehicle-type="others" data-price="${others.price_per_hour || 0}" data-available="${others.available_slots}">
+                    <button class="vehicle-btn others ${others.available_slots === 0 ? 'disabled' : ''}" data-vehicle-type="others" data-price="${others.price_per_hour || 0}" data-available="${others.available_slots || 0}">
                       <span class="vehicle-icon">🚐</span>
                       <div class="vehicle-info">
                         <div class="vehicle-label">Others</div>
-                        <div class="vehicle-details">₹${others.price_per_hour || 0}/hr • ${others.available_slots} slots available</div>
+                        <div class="vehicle-details">₹${others.price_per_hour || 0}/hr • ${others.available_slots > 0 ? others.available_slots + ' slots available' : 'Fully booked'}</div>
                       </div>
                     </button>
-                    ` : `
-                    <button class="vehicle-btn others disabled" disabled>
-                      <span class="vehicle-icon">🚐</span>
-                      <div class="vehicle-info">
-                        <div class="vehicle-label">Others</div>
-                        <div class="vehicle-details">₹${others.price_per_hour || 0}/hr • Fully booked</div>
-                      </div>
-                    </button>
-                    `}
                   </div>
                 </div>
               </article>
@@ -363,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
     /******** event wiring for vehicle type buttons ********/
     document.addEventListener('click', function(e){
-      const btn = e.target.closest && e.target.closest('.vehicle-btn:not(.disabled)');
+      const btn = e.target.closest && e.target.closest('.vehicle-btn');
       if (!btn) return;
       const card = btn.closest('.pme-card');
       if (!card) return;
