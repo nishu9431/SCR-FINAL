@@ -43,6 +43,9 @@ async def create_booking(
     
     # Get vehicle type from booking data (default to "4wheeler" if not provided)
     vehicle_type = getattr(booking_data, 'vehicle_type', '4wheeler')
+    # Map auto_truck to others for backend compatibility
+    if vehicle_type == 'auto_truck':
+        vehicle_type = 'others'
     if vehicle_type not in ["2wheeler", "4wheeler", "others"]:
         vehicle_type = "4wheeler"
     
