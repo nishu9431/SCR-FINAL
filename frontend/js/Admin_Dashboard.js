@@ -253,7 +253,6 @@ function filterBookings() {
     }
     
     displayBookings(filtered);
-    addActivityLog(`Filtered bookings: ${filter}`, 'success');
 }
 // Auto Refresh
 function startAutoRefresh() {
@@ -263,10 +262,10 @@ function startAutoRefresh() {
 }
 
 async function refreshData() {
-    addActivityLog('Refreshing dashboard data...', 'success');
     await loadDashboardData();
 }
-ion updateLastUpdatedTime() {
+
+function updateLastUpdatedTime() {
     const now = new Date();
     const timeString = now.toLocaleTimeString('en-US', {
         hour: '2-digit',
