@@ -32,6 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
     startTimeInput.value = formatDateTimeLocal(oneHourLater);
     endTimeInput.value = formatDateTimeLocal(twoHoursLater);
     
+    // Initialize search functionality
+    initializeSearch();
+    
     // Static data for map pins and booking cards
     const parkingLocations = [
         { 
@@ -253,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isFullyBooked = totalAvailable === 0;
 
             cardsHTML += `
-              <article class="pme-card ${isFullyBooked ? 'fully-booked' : ''}" data-lot-id="${lot.id}" data-lot-name="${escapeHtml(lot.name)}">
+              <article class="pme-card ${isFullyBooked ? 'fully-booked' : ''}" data-lot-id="${lot.id}" data-location-id="${lot.id}" data-lot-name="${escapeHtml(lot.name)}">
                 <div class="pme-card-thumb">
                   <img src="${THUMB}" alt="${escapeHtml(lot.name)} preview" />
                   ${isFullyBooked ? '<div class="booked-overlay">FULLY BOOKED</div>' : ''}
@@ -442,5 +445,91 @@ document.addEventListener('DOMContentLoaded', () => {
   function showSettings(e) {
       e.preventDefault();
       alert('Settings: Configure your account preferences. Coming soon!');
+  }
+  
+  // Search Functionality
+  function initializeSearch() {
+      const searchInput = document.getElementById('searchInput');
+      const searchResults = document.getElementById('searchResults');
+      
+      if (!searchInput || !searchResults) return;
+      
+      // Search parking locations
+      searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase().trim();
+          
+          if (query.length === 0) {
+              searchResults.classList.remove('show');
+              return;
+          }
+          
+          // Filter locations based on search query
+          const filteredLocations = parkingLocations.filter(location => {
+              return location.name.toLowerCase().includes(query) ||
+                     location.address.toLowerCase().includes(query);
+          });
+          
+          // Display search results
+          if (filteredLocations.length > 0) {
+              searchResults.innerHTML = filteredLocations.map(location => `
+                  <div class="search-result-item" data-location-id="${location.id}">
+                      <div class="search-result-name">${location.name}</div>
+                      <div class="search-result-address">
+                          📍 ${location.address}
+                      </div>
+                      <div class="search-result-distance">
+                          ${location.distance} • ${location.availableSpots} spots available
+                      </div>
+                  </div>
+              `).join('');
+              searchResults.classList.add('show');
+              
+              // Add click event to search result items
+              searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                  item.addEventListener('click', () => {
+                      const locationId = item.getAttribute('data-location-id');
+                      scrollToLocationFunc(locationId);
+                  });
+              });
+          } else {
+              searchResults.innerHTML = '<div class="no-results">No parking locations found</div>';
+              searchResults.classList.add('show');
+          }
+      });
+      
+      // Close search results when clicking outside
+      document.addEventListener('click', (e) => {
+          if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+              searchResults.classList.remove('show');
+          }
+      });
+      
+      // Close search results on escape key
+      searchInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+              searchResults.classList.remove('show');
+              searchInput.blur();
+          }
+      });
+  }
+  
+  // Scroll to specific location in parking grid
+  function scrollToLocationFunc(locationId) {
+      const searchResults = document.getElementById('searchResults');
+      const searchInput = document.getElementById('searchInput');
+      
+      // Close search dropdown
+      searchResults.classList.remove('show');
+      searchInput.value = '';
+      
+      // Find the parking card element
+      const parkingCard = document.querySelector(`[data-location-id="${locationId}"]`);
+      if (parkingCard) {
+          parkingCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          parkingCard.style.animation = 'highlight 1.5s ease';
+          setTimeout(() => {
+              parkingCard.style.animation = '';
+          }, 1500);
+      }
   }
   

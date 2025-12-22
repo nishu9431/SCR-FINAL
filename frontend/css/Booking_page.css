@@ -32,8 +32,20 @@ body {
 .nav-logo i { color: var(--brand-skyblue); }
 
 .search-bar { position: relative; width: 100%; max-width: 400px; }
-.search-bar input { width: 100%; padding: 14px 24px 14px 50px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.06); background-color: rgba(255,255,255,0.04); font-size: 14px; color: #fff; }
+.search-bar input { width: 100%; padding: 14px 24px 14px 50px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.06); background-color: rgba(255,255,255,0.04); font-size: 14px; color: #fff; transition: all 0.3s ease; }
+.search-bar input:focus { background-color: rgba(255,255,255,0.08); outline: none; border-color: var(--brand-skyblue); }
 .search-bar .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: rgba(255,255,255,0.6); }
+
+/* Search Results Dropdown */
+.search-results { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); max-height: 400px; overflow-y: auto; z-index: 1000; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; }
+.search-results.show { opacity: 1; visibility: visible; transform: translateY(0); }
+.search-result-item { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: all 0.2s ease; }
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover { background: #f8fafc; padding-left: 24px; }
+.search-result-name { font-size: 15px; font-weight: 600; color: #1E1B4B; margin-bottom: 4px; }
+.search-result-address { font-size: 13px; color: #64748b; display: flex; align-items: center; gap: 4px; }
+.search-result-distance { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+.no-results { padding: 20px; text-align: center; color: #64748b; font-size: 14px; }
 
 .nav-buttons { display: flex; align-items: center; gap: 16px; }
 .btn-login, .btn-signup { padding: 10px 20px; border-radius: 999px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
@@ -286,68 +298,139 @@ body {
 /* ---------- Time Selection Section ---------- */
 .time-selection-section {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 40px 0;
+    padding: 60px 0;
     margin-top: 0;
 }
 
 .time-selection-card {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 16px;
-    padding: 32px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+.time-selection-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.time-selection-header .time-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--primary-color);
 }
 
 .time-selection-card h2 {
     color: var(--dark-text);
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 700;
-    margin: 0 0 24px 0;
-    text-align: center;
+    margin: 0;
+}
+
+.time-inputs-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
 }
 
 .time-inputs-row {
     display: flex;
-    gap: 20px;
-    align-items: flex-end;
+    gap: 24px;
+    align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
+    width: 100%;
+    max-width: 900px;
+}
+
+.time-arrow {
+    color: var(--primary-color);
+    font-size: 24px;
+    margin-top: 24px;
+}
+
+.time-arrow i {
+    width: 32px;
+    height: 32px;
 }
 
 .time-input-group {
     flex: 1;
-    min-width: 220px;
-    max-width: 300px;
+    min-width: 280px;
+    max-width: 350px;
 }
 
 .time-input-group label {
-    display: block;
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
     font-weight: 600;
     color: var(--dark-text);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+.time-input-group label i {
+    width: 18px;
+    height: 18px;
+    color: var(--primary-color);
 }
 
 .time-input-group input[type="datetime-local"] {
     width: 100%;
-    padding: 12px 16px;
+    padding: 14px 18px;
     border: 2px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 15px;
     font-family: 'Inter', sans-serif;
     color: var(--dark-text);
     background: white;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .time-input-group input[type="datetime-local"]:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(106, 90, 249, 0.1);
+    box-shadow: 0 0 0 4px rgba(106, 90, 249, 0.1), 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
 }
 
 .search-parking-btn {
-    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 40px;
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(106, 90, 249, 0.3);
+    min-width: 280px;
+}
+
+.search-parking-btn i {
+    width: 20px;
+    height: 20px;
+}
+
+.search-parking-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(106, 90, 249, 0.4);
+}
+
+.search-parking-btn:active {
+    transform: translateY(-1px);
+}
     color: white;
     border: none;
     border-radius: 8px;
@@ -496,4 +579,37 @@ body {
 /* Update card footer to remove old Book Now button styles */
 .pme-footer {
     display: none; /* Hide old footer with single price/button */
+}
+
+/* Highlight animation for searched location */
+@keyframes highlight {
+    0%, 100% {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 12px 40px rgba(106, 90, 249, 0.4);
+        transform: scale(1.02);
+    }
+}
+
+/* Responsive adjustments for time selection */
+@media (max-width: 768px) {
+    .time-inputs-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .time-arrow {
+        transform: rotate(90deg);
+        margin: 0;
+    }
+    
+    .time-input-group {
+        max-width: 100%;
+    }
+    
+    .search-parking-btn {
+        width: 100%;
+    }
 }

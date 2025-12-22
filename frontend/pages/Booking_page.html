@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Park Made Easy</title>
+    <title>ParkPulse</title>
     <link rel="stylesheet" href="../css/Booking_page.css?v=20251217e">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="../js/Booking_page.js?v=20251217e" defer></script>
@@ -14,11 +14,12 @@
         <div class="container">
             <a href="Landing_page.html" class="nav-logo">
                 <i data-lucide="car"></i>
-                <span>Park Made Easy</span>
+                <span>ParkPulse</span>
             </a>
             <div class="search-bar">
                 <i data-lucide="search" class="search-icon"></i>
-                <input type="text" placeholder="Search by area or landmark">
+                <input type="text" id="searchInput" placeholder="Search by area or landmark" autocomplete="off">
+                <div class="search-results" id="searchResults"></div>
             </div>
             <div class="nav-buttons">
                 <div class="profile-dropdown">
@@ -111,17 +112,34 @@
         <section class="time-selection-section">
             <div class="container">
                 <div class="time-selection-card">
-                    <h2>Select Your Parking Time</h2>
-                    <div class="time-inputs-row">
-                        <div class="time-input-group">
-                            <label for="start-time">Start Time</label>
-                            <input type="datetime-local" id="start-time" required>
+                    <div class="time-selection-header">
+                        <i data-lucide="clock" class="time-icon"></i>
+                        <h2>Select Your Parking Time</h2>
+                    </div>
+                    <div class="time-inputs-wrapper">
+                        <div class="time-inputs-row">
+                            <div class="time-input-group">
+                                <label for="start-time">
+                                    <i data-lucide="calendar-check"></i>
+                                    Start Time
+                                </label>
+                                <input type="datetime-local" id="start-time" required>
+                            </div>
+                            <div class="time-arrow">
+                                <i data-lucide="arrow-right"></i>
+                            </div>
+                            <div class="time-input-group">
+                                <label for="end-time">
+                                    <i data-lucide="calendar-x"></i>
+                                    End Time
+                                </label>
+                                <input type="datetime-local" id="end-time" required>
+                            </div>
                         </div>
-                        <div class="time-input-group">
-                            <label for="end-time">End Time</label>
-                            <input type="datetime-local" id="end-time" required>
-                        </div>
-                        <button class="search-parking-btn" id="search-parking-btn">Search Available Parking</button>
+                        <button class="search-parking-btn" id="search-parking-btn">
+                            <i data-lucide="search"></i>
+                            <span>Search Available Parking</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -137,7 +155,7 @@
 
     <footer class="footer">
         <div class="container footer-container">
-            <p4>&copy; 2025 Parking Made Easy</p4>
+            <p4>&copy; 2025 ParkPulse</p4>
             <div class="footer-links">
                 <a href="#">Terms</a>
                 <a href="#">Privacy</a>
