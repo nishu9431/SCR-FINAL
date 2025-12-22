@@ -24,20 +24,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const endTimeInput = document.getElementById('end-time');
     const searchButton = document.getElementById('search-parking-btn');
     
-    // Set default values and restrictions
+    // Function to update min/max constraints based on current time
+    function updateTimeConstraints() {
+        const now = new Date();
+        const threeDaysLater = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+        
+        startTimeInput.min = formatDateTimeLocal(now);
+        startTimeInput.max = formatDateTimeLocal(threeDaysLater);
+        endTimeInput.max = formatDateTimeLocal(threeDaysLater);
+        
+        // Update end time min based on start time
+        const selectedStart = startTimeInput.value ? new Date(startTimeInput.value) : now;
+        endTimeInput.min = formatDateTimeLocal(selectedStart);
+    }
+    
+    // Set default values and initial restrictions
     const now = new Date();
     const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
     const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000);
-    const threeDaysLater = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
     
-    // Set min and max attributes for date/time inputs
-    startTimeInput.min = formatDateTimeLocal(now);
-    startTimeInput.max = formatDateTimeLocal(threeDaysLater);
-    endTimeInput.min = formatDateTimeLocal(now);
-    endTimeInput.max = formatDateTimeLocal(threeDaysLater);
-    
+    updateTimeConstraints();
     startTimeInput.value = formatDateTimeLocal(oneHourLater);
     endTimeInput.value = formatDateTimeLocal(twoHoursLater);
+    
+    // Update constraints periodically (every 30 seconds)
+    setInterval(updateTimeConstraints, 30000);
     
     // Add validation when user changes start time
     startTimeInput.addEventListener('change', function() {
@@ -45,15 +56,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentTime = new Date();
         const maxTime = new Date(currentTime.getTime() + 3 * 24 * 60 * 60 * 1000);
         
+        // Check if selected time is in the past
         if (selectedStart < currentTime) {
-            alert('Start time cannot be in the past. Please select a current or future time.');
-            this.value = formatDateTimeLocal(new Date(currentTime.getTime() + 60 * 60 * 1000));
+            alert('⚠️ Start time cannot be in the past. Please select a current or future time.');
+            const minValidTime = new Date(currentTime.getTime() + 5 * 60 * 1000); // 5 minutes from now
+            this.value = formatDateTimeLocal(minValidTime);
+            updateTimeConstraints();
             return;
         }
         
         if (selectedStart > maxTime) {
-            alert('Booking is only allowed up to 3 days in advance.');
+            alert('⚠️ Booking is only allowed up to 3 days in advance.');
             this.value = formatDateTimeLocal(maxTime);
+            updateTimeConstraints();
             return;
         }
         
@@ -66,6 +81,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentEnd <= selectedStart) {
             endTimeInput.value = formatDateTimeLocal(minEndTime);
         }
+        
+        updateTimeConstraints();
+    });
+    
+    // Add input validation on focus to prevent manual past date entry
+    startTimeInput.addEventListener('input', function() {
+        const selectedStart = new Date(this.value);
+        const currentTime = new Date();
+        
+        if (selectedStart < currentTime) {
+            this.setCustomValidity('Start time cannot be in the past');
+        } else {
+            this.setCustomValidity('');
+        }
     });
     
     // Add validation when user changes end time
@@ -75,16 +104,44 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentTime = new Date();
         const maxTime = new Date(currentTime.getTime() + 3 * 24 * 60 * 60 * 1000);
         
+        // Check if end time is in the past
+        if (selectedEnd < currentTime) {
+            alert('⚠️ End time cannot be in the past. Please select a current or future time.');
+            const minValidEndTime = new Date(Math.max(currentTime.getTime(), selectedStart.getTime()) + 60 * 60 * 1000);
+            this.value = formatDateTimeLocal(minValidEndTime);
+            updateTimeConstraints();
+            return;
+        }
+        
         if (selectedEnd <= selectedStart) {
-            alert('End time must be after start time.');
+            alert('⚠️ End time must be after start time.');
             this.value = formatDateTimeLocal(new Date(selectedStart.getTime() + 60 * 60 * 1000));
+            updateTimeConstraints();
             return;
         }
         
         if (selectedEnd > maxTime) {
-            alert('Booking is only allowed up to 3 days in advance.');
+            alert('⚠️ Booking is only allowed up to 3 days in advance.');
             this.value = formatDateTimeLocal(maxTime);
+            updateTimeConstraints();
             return;
+        }
+        
+        updateTimeConstraints();
+    });
+    
+    // Add input validation on focus to prevent manual past date entry
+    endTimeInput.addEventListener('input', function() {
+        const selectedEnd = new Date(this.value);
+        const currentTime = new Date();
+        const selectedStart = new Date(startTimeInput.value);
+        
+        if (selectedEnd < currentTime) {
+            this.setCustomValidity('End time cannot be in the past');
+        } else if (selectedEnd <= selectedStart) {
+            this.setCustomValidity('End time must be after start time');
+        } else {
+            this.setCustomValidity('');
         }
     });
     

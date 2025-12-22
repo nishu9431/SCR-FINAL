@@ -341,7 +341,7 @@ body {
 .time-inputs-row {
     display: flex;
     gap: 24px;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     width: 100%;
     max-width: 900px;
@@ -350,7 +350,8 @@ body {
 .time-arrow {
     color: var(--primary-color);
     font-size: 24px;
-    margin-top: 24px;
+    padding-bottom: 12px;
+    flex-shrink: 0;
 }
 
 .time-arrow i {
@@ -362,6 +363,8 @@ body {
     flex: 1;
     min-width: 280px;
     max-width: 350px;
+    display: flex;
+    flex-direction: column;
 }
 
 .time-input-group label {
