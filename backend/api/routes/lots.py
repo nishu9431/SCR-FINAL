@@ -224,8 +224,9 @@ async def get_lot_slots(
     db: Session = Depends(get_db)
 ):
     """Get slots for a parking lot, optionally filtered by vehicle type"""
-    from models.models import ParkingSlot
-    from sqlalchemy import and_
+    from models.models import ParkingSlot, Booking, SlotStatus, BookingStatus
+    from sqlalchemy import and_, or_
+    from datetime import datetime, timezone, timedelta
     
     lot = db.query(ParkingLot).filter(ParkingLot.id == lot_id).first()
     if not lot:
@@ -233,6 +234,30 @@ async def get_lot_slots(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Parking lot not found"
         )
+    
+    # Release expired bookings (end_time + 5 minutes has passed)
+    now_utc = datetime.now(timezone.utc)
+    expired_cutoff = now_utc - timedelta(minutes=5)
+    
+    expired_bookings = db.query(Booking).filter(
+        and_(
+            Booking.lot_id == lot_id,
+            Booking.end_time <= expired_cutoff,
+            Booking.status.in_([BookingStatus.CONFIRMED, BookingStatus.ACTIVE])
+        )
+    ).all()
+    
+    for booking in expired_bookings:
+        # Mark booking as completed
+        booking.status = BookingStatus.COMPLETED
+        # Release the slot
+        if booking.slot_id:
+            slot = db.query(ParkingSlot).filter(ParkingSlot.id == booking.slot_id).first()
+            if slot:
+                slot.status = SlotStatus.AVAILABLE
+    
+    if expired_bookings:
+        db.commit()
     
     # Build query
     query = db.query(ParkingSlot).filter(

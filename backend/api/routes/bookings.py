@@ -55,6 +55,26 @@ async def create_booking(
     if vehicle_type not in ["2wheeler", "4wheeler", "others"]:
         vehicle_type = "4wheeler"
     
+    # Release expired bookings before checking availability (end_time + 5 minutes has passed)
+    expired_cutoff = now_utc - timedelta(minutes=5)
+    expired_bookings = db.query(Booking).filter(
+        and_(
+            Booking.lot_id == booking_data.lot_id,
+            Booking.end_time <= expired_cutoff,
+            Booking.status.in_([BookingStatus.CONFIRMED, BookingStatus.ACTIVE])
+        )
+    ).all()
+    
+    for booking in expired_bookings:
+        booking.status = BookingStatus.COMPLETED
+        if booking.slot_id:
+            slot = db.query(ParkingSlot).filter(ParkingSlot.id == booking.slot_id).first()
+            if slot:
+                slot.status = SlotStatus.AVAILABLE
+    
+    if expired_bookings:
+        db.commit()
+    
     # Find the specific slot if slot_id provided, otherwise find any available slot of the right type
     if hasattr(booking_data, 'slot_id') and booking_data.slot_id:
         # Check if the specified slot is available

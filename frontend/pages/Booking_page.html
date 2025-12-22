@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ParkPulse</title>
-    <link rel="stylesheet" href="../css/Booking_page.css?v=20251222e">
+    <link rel="stylesheet" href="../css/Booking_page.css?v=20251223a">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="../js/Booking_page.js?v=20251222e" defer></script>
+    <script src="../js/Booking_page.js?v=20251223a" defer></script>
 </head>
 <body>
 
@@ -166,6 +166,72 @@
             </div>
             <div class="modal-body" id="bookingsModalBody">
                 <div class="loading">Loading bookings...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>
+                    <i data-lucide="settings"></i>
+                    Account Settings
+                </h2>
+                <button class="close-modal" onclick="closeSettingsModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="settingsForm" class="settings-form">
+                    <div class="form-section">
+                        <h3>Personal Information</h3>
+                        <div class="form-group">
+                            <label for="settings-name">
+                                <i data-lucide="user"></i>
+                                Full Name
+                            </label>
+                            <input type="text" id="settings-name" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-email">
+                                <i data-lucide="mail"></i>
+                                Email Address
+                            </label>
+                            <input type="email" id="settings-email" placeholder="Enter your email" readonly>
+                            <small>Email cannot be changed</small>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Change Password</h3>
+                        <div class="form-group">
+                            <label for="settings-new-password">
+                                <i data-lucide="lock"></i>
+                                New Password
+                            </label>
+                            <input type="password" id="settings-new-password" placeholder="Leave blank to keep current password">
+                            <small>Minimum 8 characters</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-confirm-password">
+                                <i data-lucide="lock"></i>
+                                Confirm New Password
+                            </label>
+                            <input type="password" id="settings-confirm-password" placeholder="Confirm new password">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeSettingsModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">
+                            <i data-lucide="save"></i>
+                            Save Changes
+                        </button>
+                    </div>
+
+                    <div id="settings-message" class="settings-message"></div>
+                </form>
             </div>
         </div>
     </div>

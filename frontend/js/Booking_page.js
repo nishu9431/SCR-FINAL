@@ -701,8 +701,150 @@ document.addEventListener('DOMContentLoaded', () => {
   
   function showSettings(e) {
       e.preventDefault();
-      alert('Settings: Configure your account preferences. Coming soon!');
+      const modal = document.getElementById('settingsModal');
+      modal.style.display = 'block';
+      
+      // Load current user data
+      loadUserSettings();
   }
+  
+  async function loadUserSettings() {
+      const token = localStorage.getItem('access_token');
+      
+      if (!token) {
+          alert('Please log in to access settings');
+          closeSettingsModal();
+          return;
+      }
+      
+      try {
+          const response = await fetch('http://localhost:8000/v1/users/profile', {
+              method: 'GET',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+              }
+          });
+          
+          if (response.ok) {
+              const userData = await response.json();
+              document.getElementById('settings-name').value = userData.full_name || userData.name || '';
+              document.getElementById('settings-email').value = userData.email || '';
+          } else {
+              throw new Error('Failed to load user data');
+          }
+      } catch (error) {
+          console.error('Error loading settings:', error);
+          showSettingsMessage('Failed to load settings', 'error');
+      }
+  }
+  
+  function closeSettingsModal() {
+      const modal = document.getElementById('settingsModal');
+      modal.style.display = 'none';
+      // Clear password fields
+      document.getElementById('settings-new-password').value = '';
+      document.getElementById('settings-confirm-password').value = '';
+      document.getElementById('settings-message').innerHTML = '';
+  }
+  
+  // Handle settings form submission
+  document.addEventListener('DOMContentLoaded', () => {
+      const settingsForm = document.getElementById('settingsForm');
+      if (settingsForm) {
+          settingsForm.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              await saveSettings();
+          });
+      }
+  });
+  
+  async function saveSettings() {
+      const token = localStorage.getItem('access_token');
+      
+      if (!token) {
+          alert('Please log in to save settings');
+          return;
+      }
+      
+      const name = document.getElementById('settings-name').value.trim();
+      const newPassword = document.getElementById('settings-new-password').value;
+      const confirmPassword = document.getElementById('settings-confirm-password').value;
+      
+      // Validate name
+      if (!name) {
+          showSettingsMessage('Name is required', 'error');
+          return;
+      }
+      
+      // Validate password if provided
+      if (newPassword) {
+          if (newPassword.length < 8) {
+              showSettingsMessage('Password must be at least 8 characters', 'error');
+              return;
+          }
+          if (newPassword !== confirmPassword) {
+              showSettingsMessage('Passwords do not match', 'error');
+              return;
+          }
+      }
+      
+      // Prepare update data
+      const updateData = {
+          full_name: name
+      };
+      
+      if (newPassword) {
+          updateData.password = newPassword;
+      }
+      
+      try {
+          showSettingsMessage('Saving changes...', 'info');
+          
+          const response = await fetch('http://localhost:8000/v1/users/profile', {
+              method: 'PUT',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(updateData)
+          });
+          
+          if (response.ok) {
+              showSettingsMessage('Settings saved successfully!', 'success');
+              // Refresh profile display
+              await fetchUserProfile();
+              // Clear password fields
+              document.getElementById('settings-new-password').value = '';
+              document.getElementById('settings-confirm-password').value = '';
+              
+              // Close modal after 2 seconds
+              setTimeout(() => {
+                  closeSettingsModal();
+              }, 2000);
+          } else {
+              const error = await response.json();
+              showSettingsMessage(error.detail || 'Failed to save settings', 'error');
+          }
+      } catch (error) {
+          console.error('Error saving settings:', error);
+          showSettingsMessage('Failed to save settings. Please try again.', 'error');
+      }
+  }
+  
+  function showSettingsMessage(message, type) {
+      const messageEl = document.getElementById('settings-message');
+      messageEl.textContent = message;
+      messageEl.className = `settings-message ${type}`;
+  }
+  
+  // Close modal when clicking outside
+  window.addEventListener('click', function(event) {
+      const settingsModal = document.getElementById('settingsModal');
+      if (event.target === settingsModal) {
+          settingsModal.style.display = 'none';
+      }
+  });
   
   // Search Functionality
   function initializeSearch() {
