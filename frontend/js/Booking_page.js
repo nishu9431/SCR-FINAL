@@ -24,13 +24,69 @@ document.addEventListener('DOMContentLoaded', () => {
     const endTimeInput = document.getElementById('end-time');
     const searchButton = document.getElementById('search-parking-btn');
     
-    // Set default values
+    // Set default values and restrictions
     const now = new Date();
     const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
     const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+    const threeDaysLater = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+    
+    // Set min and max attributes for date/time inputs
+    startTimeInput.min = formatDateTimeLocal(now);
+    startTimeInput.max = formatDateTimeLocal(threeDaysLater);
+    endTimeInput.min = formatDateTimeLocal(now);
+    endTimeInput.max = formatDateTimeLocal(threeDaysLater);
     
     startTimeInput.value = formatDateTimeLocal(oneHourLater);
     endTimeInput.value = formatDateTimeLocal(twoHoursLater);
+    
+    // Add validation when user changes start time
+    startTimeInput.addEventListener('change', function() {
+        const selectedStart = new Date(this.value);
+        const currentTime = new Date();
+        const maxTime = new Date(currentTime.getTime() + 3 * 24 * 60 * 60 * 1000);
+        
+        if (selectedStart < currentTime) {
+            alert('Start time cannot be in the past. Please select a current or future time.');
+            this.value = formatDateTimeLocal(new Date(currentTime.getTime() + 60 * 60 * 1000));
+            return;
+        }
+        
+        if (selectedStart > maxTime) {
+            alert('Booking is only allowed up to 3 days in advance.');
+            this.value = formatDateTimeLocal(maxTime);
+            return;
+        }
+        
+        // Update end time min to be after start time
+        const minEndTime = new Date(selectedStart.getTime() + 60 * 60 * 1000); // At least 1 hour after start
+        endTimeInput.min = formatDateTimeLocal(selectedStart);
+        
+        // If current end time is before new start time, update it
+        const currentEnd = new Date(endTimeInput.value);
+        if (currentEnd <= selectedStart) {
+            endTimeInput.value = formatDateTimeLocal(minEndTime);
+        }
+    });
+    
+    // Add validation when user changes end time
+    endTimeInput.addEventListener('change', function() {
+        const selectedEnd = new Date(this.value);
+        const selectedStart = new Date(startTimeInput.value);
+        const currentTime = new Date();
+        const maxTime = new Date(currentTime.getTime() + 3 * 24 * 60 * 60 * 1000);
+        
+        if (selectedEnd <= selectedStart) {
+            alert('End time must be after start time.');
+            this.value = formatDateTimeLocal(new Date(selectedStart.getTime() + 60 * 60 * 1000));
+            return;
+        }
+        
+        if (selectedEnd > maxTime) {
+            alert('Booking is only allowed up to 3 days in advance.');
+            this.value = formatDateTimeLocal(maxTime);
+            return;
+        }
+    });
     
     // Initialize search functionality
     initializeSearch();
@@ -39,122 +95,122 @@ document.addEventListener('DOMContentLoaded', () => {
     const parkingLocations = [
         { 
             id: "1", 
-            name: "MG Road Parking", 
+            name: "Downtown Parking Plaza", 
             lat: 35, 
             lng: 45, 
             availableSpots: 15,
-            address: "MG Road, Bengaluru",
+            address: "123 Market Street",
             distance: "2.5 km away",
             rating: 4.5,
             vehicle_types: {
-                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 20 },
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 35 },
                 "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 50 },
-                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 40 }
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 43 }
             }
         },
         { 
             id: "2", 
-            name: "Forum Mall Parking - Konankunte", 
+            name: "Airport Long-term Parking", 
             lat: 55, 
             lng: 65, 
             availableSpots: 8,
-            address: "Konankunte, Bengaluru",
+            address: "Airport Access Road",
             distance: "5.2 km away",
             rating: 4.2,
             vehicle_types: {
-                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 15 },
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 32 },
                 "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 45 },
-                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 35 }
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 38 }
             }
         },
         { 
             id: "3", 
-            name: "Nexus Mall - Koramangala", 
+            name: "Tech Campus Garage", 
             lat: 45, 
             lng: 35, 
             availableSpots: 3,
-            address: "Koramangala, Bengaluru",
+            address: "1 Infinite Loop",
             distance: "3.8 km away",
             rating: 4.6,
             vehicle_types: {
-                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 25 },
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 42 },
                 "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 60 },
-                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 50 }
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 51 }
             }
         },
         { 
             id: "4", 
-            name: "Indranagar Parking Lot", 
+            name: "Beach Parking Lot", 
             lat: 65, 
             lng: 55, 
             availableSpots: 12,
-            address: "Indranagar, Bengaluru",
+            address: "Ocean Beach",
             distance: "4.1 km away",
             rating: 4.3,
             vehicle_types: {
-                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 20 },
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 35 },
                 "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 50 },
-                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 40 }
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 43 }
             }
         },
         { 
             id: "5", 
-            name: "Phoenix Mall of Asia - Yelahanka", 
+            name: "Residential Complex Parking", 
             lat: 25, 
             lng: 50, 
             availableSpots: 20,
-            address: "Yelahanka, Bengaluru",
+            address: "456 Residential Drive",
             distance: "8.5 km away",
             rating: 4.7,
             vehicle_types: {
-                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 18 },
-                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 45 },
-                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 38 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 34 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 48 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 41 }
             }
         },
         { 
             id: "6", 
-            name: "Garuda Mall - Jayanagar", 
+            name: "Garuda Mall", 
             lat: 70, 
             lng: 40, 
             availableSpots: 6,
-            address: "Jayanagar, Bengaluru",
+            address: "Magrath Road, Ashok Nagar",
             distance: "6.3 km away",
             rating: 4.4,
             vehicle_types: {
-                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 22 },
-                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 55 },
-                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 45 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 28 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 40 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 34 }
             }
         },
         { 
             id: "7", 
-            name: "Royal Meenakshi Mall - Bannerghatta Road", 
+            name: "Royal Meenakshi Mall", 
             lat: 40, 
             lng: 70, 
             availableSpots: 18,
-            address: "Bannerghatta Road, Bengaluru",
+            address: "Bannerghatta Road",
             distance: "7.2 km away",
             rating: 4.5,
             vehicle_types: {
-                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 20 },
-                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 48 },
-                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 40 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 25 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 35 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 30 }
             }
         },
         { 
             id: "8", 
-            name: "VegaCity - Bannerghatta Road", 
+            name: "VegaCity Mall", 
             lat: 50, 
             lng: 25, 
             availableSpots: 4,
-            address: "Bannerghatta Road, Bengaluru",
+            address: "Rajajinagar",
             distance: "7.8 km away",
             rating: 4.1,
             vehicle_types: {
-                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 18 },
-                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 45 },
-                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 38 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 27 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 38 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 32 }
             }
         },
         { 
@@ -163,13 +219,13 @@ document.addEventListener('DOMContentLoaded', () => {
             lat: 60, 
             lng: 30, 
             availableSpots: 25,
-            address: "Avalahalli, Yelahanka, Bengaluru",
+            address: "Avalahalli",
             distance: "9.2 km away",
             rating: 4.6,
             vehicle_types: {
-                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 15 },
-                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 40 },
-                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 30 }
+                "2wheeler": { available_slots: 40, total_slots: 40, ev_slots: 20, price_per_hour: 21 },
+                "4wheeler": { available_slots: 25, total_slots: 25, ev_slots: 10, price_per_hour: 30 },
+                "auto_truck": { available_slots: 30, total_slots: 30, auto_slots: 15, truck_slots: 15, price_per_hour: 26 }
             }
         }
     ];
@@ -212,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   
     /******** Render cards using static data ********/
-    function fetchAndRenderLocations() {
+    async function fetchAndRenderLocations() {
         const grid = document.getElementById('parking-grid');
         if (!grid) {
             console.error('parking-grid element not found!');
@@ -227,27 +283,81 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Use static parkingLocations data
-        const locations = parkingLocations;
+        // Validate that times are not in the past
+        const selectedStart = new Date(startTime);
+        const selectedEnd = new Date(endTime);
+        const currentTime = new Date();
+        const maxTime = new Date(currentTime.getTime() + 3 * 24 * 60 * 60 * 1000);
         
-        console.log('Total parking locations:', locations.length);
-        console.log('Selected time:', startTime, 'to', endTime);
-        
-        if (!locations || locations.length === 0) {
-            grid.innerHTML = '<p class="error-message">No parking locations available.</p>';
+        if (selectedStart < currentTime) {
+            alert('⚠️ Start time cannot be in the past. Please select current or future time.');
+            startTimeInput.value = formatDateTimeLocal(currentTime);
             return;
         }
         
-        // Render cards - Show all locations regardless of availability
-        let cardsHTML = '';
-        locations.forEach(lot => {
-            const vehicleTypes = lot.vehicle_types || {};
-            const twoWheeler = vehicleTypes["2wheeler"] || {};
-            const fourWheeler = vehicleTypes["4wheeler"] || {};
-            const autoTruck = vehicleTypes["auto_truck"] || {};
+        if (selectedEnd <= selectedStart) {
+            alert('⚠️ End time must be after start time.');
+            endTimeInput.value = formatDateTimeLocal(new Date(selectedStart.getTime() + 60 * 60 * 1000));
+            return;
+        }
+        
+        if (selectedStart > maxTime || selectedEnd > maxTime) {
+            alert('⚠️ Booking is only allowed up to 3 days in advance.');
+            return;
+        }
+        
+        // Fetch real-time availability from database
+        grid.innerHTML = '<p class="loading-message">Loading parking locations and availability...</p>';
+        
+        try {
+            // Fetch availability for all locations
+            const availabilityPromises = parkingLocations.map(async (lot) => {
+                const lotData = { ...lot };
+                
+                // Fetch real available slots for each vehicle type
+                for (const vehicleType of ['2wheeler', '4wheeler', 'others']) {
+                    try {
+                        const response = await fetch(`${API_BASE}/lots/${lot.id}/slots?vehicle_type=${vehicleType}`);
+                        if (response.ok) {
+                            const slots = await response.json();
+                            const availableCount = slots.filter(s => s.status === 'AVAILABLE').length;
+                            const totalCount = slots.length;
+                            
+                            // Update the vehicle type data with real counts
+                            const frontendType = vehicleType === 'others' ? 'auto_truck' : vehicleType;
+                            if (lotData.vehicle_types[frontendType]) {
+                                lotData.vehicle_types[frontendType].available_slots = availableCount;
+                                lotData.vehicle_types[frontendType].total_slots = totalCount;
+                            }
+                        }
+                    } catch (err) {
+                        console.error(`Failed to fetch slots for lot ${lot.id}, vehicle ${vehicleType}:`, err);
+                    }
+                }
+                
+                return lotData;
+            });
             
-            // For now, show all slots as available (booking logic not yet implemented)
-            const totalAvailable = (twoWheeler.available_slots || 0) + (fourWheeler.available_slots || 0) + (autoTruck.available_slots || 0);
+            const locations = await Promise.all(availabilityPromises);
+            
+            console.log('Total parking locations:', locations.length);
+            console.log('Selected time:', startTime, 'to', endTime);
+            
+            if (!locations || locations.length === 0) {
+                grid.innerHTML = '<p class="error-message">No parking locations available.</p>';
+                return;
+            }
+            
+            // Render cards with real-time availability
+            let cardsHTML = '';
+            locations.forEach(lot => {
+                const vehicleTypes = lot.vehicle_types || {};
+                const twoWheeler = vehicleTypes["2wheeler"] || {};
+                const fourWheeler = vehicleTypes["4wheeler"] || {};
+                const autoTruck = vehicleTypes["auto_truck"] || {};
+                
+                // Calculate total available from real data
+                const totalAvailable = (twoWheeler.available_slots || 0) + (fourWheeler.available_slots || 0) + (autoTruck.available_slots || 0);
             const availability = getAvailability(totalAvailable);
             const availClass = availability === AVAILABILITY_CONFIG.high ? 'high' : (availability === AVAILABILITY_CONFIG.medium ? 'mid' : 'low');
             const availCss = availability === AVAILABILITY_CONFIG.high ? 'av-high' : (availability === AVAILABILITY_CONFIG.medium ? 'av-mid' : 'av-low');
@@ -314,6 +424,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         console.log('✅ All cards rendered successfully');
+        
+        } catch (error) {
+            console.error('Error fetching parking locations:', error);
+            grid.innerHTML = '<p class="error-message">Failed to load parking locations. Please try again.</p>';
+        }
     }
   
     /******** helpers ********/
@@ -401,11 +516,14 @@ document.addEventListener('DOMContentLoaded', () => {
   
   async function fetchUserProfile() {
       const token = localStorage.getItem('access_token');
+      const storedEmail = localStorage.getItem('user_email');
+      
+      console.log('Fetching profile with token:', token ? 'Token exists' : 'No token');
+      console.log('Stored email:', storedEmail);
       
       if (!token) {
           document.getElementById('profileName').textContent = 'Guest User';
           document.getElementById('profileEmail').textContent = 'Not logged in';
-          document.getElementById('profilePhone').textContent = 'N/A';
           return;
       }
       
@@ -418,29 +536,168 @@ document.addEventListener('DOMContentLoaded', () => {
               }
           });
           
+          console.log('Profile response status:', response.status);
+          
           if (response.ok) {
               const userData = await response.json();
-              document.getElementById('profileName').textContent = userData.full_name || 'User';
+              console.log('User data received:', userData);
+              
+              // Use full_name first, then name, then extract from email
+              const displayName = userData.full_name || userData.name || userData.email?.split('@')[0] || 'User';
+              const capitalizedName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
+              
+              document.getElementById('profileName').textContent = capitalizedName;
               document.getElementById('profileEmail').textContent = userData.email || 'N/A';
-              document.getElementById('profilePhone').textContent = userData.phone || 'Not provided';
           } else {
               console.error('Failed to fetch profile:', response.status);
+              // Token might be invalid - clear it
+              if (response.status === 401 || response.status === 403) {
+                  console.log('Token invalid, clearing...');
+                  localStorage.removeItem('access_token');
+                  localStorage.removeItem('user_email');
+              }
               document.getElementById('profileName').textContent = 'Unknown User';
-              document.getElementById('profileEmail').textContent = 'Error loading email';
-              document.getElementById('profilePhone').textContent = 'Error loading phone';
+              document.getElementById('profileEmail').textContent = storedEmail || 'Error loading email';
           }
       } catch (error) {
           console.error('Error fetching profile:', error);
           document.getElementById('profileName').textContent = 'Error';
-          document.getElementById('profileEmail').textContent = 'Unable to load';
-          document.getElementById('profilePhone').textContent = 'Unable to load';
+          document.getElementById('profileEmail').textContent = storedEmail || 'Unable to load';
       }
   }
   
   function showBookings(e) {
       e.preventDefault();
-      alert('Previous Bookings: This feature will show your booking history. Coming soon!');
+      const modal = document.getElementById('bookingsModal');
+      const modalBody = document.getElementById('bookingsModalBody');
+      
+      modal.style.display = 'block';
+      modalBody.innerHTML = '<div class="loading">Loading bookings...</div>';
+      
+      // Fetch bookings
+      fetchUserBookings();
   }
+  
+  async function fetchUserBookings() {
+      const token = localStorage.getItem('access_token');
+      const modalBody = document.getElementById('bookingsModalBody');
+      
+      if (!token) {
+          modalBody.innerHTML = '<div class="error-message">Please log in to view your bookings.</div>';
+          return;
+      }
+      
+      try {
+          const response = await fetch('http://localhost:8000/v1/users/bookings', {
+              method: 'GET',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+              }
+          });
+          
+          if (response.ok) {
+              const bookings = await response.json();
+              displayBookings(bookings);
+          } else {
+              modalBody.innerHTML = '<div class="error-message">Failed to load bookings. Please try again.</div>';
+          }
+      } catch (error) {
+          console.error('Error fetching bookings:', error);
+          modalBody.innerHTML = '<div class="error-message">Error loading bookings. Please check your connection.</div>';
+      }
+  }
+  
+  function displayBookings(bookings) {
+      const modalBody = document.getElementById('bookingsModalBody');
+      
+      if (!bookings || bookings.length === 0) {
+          modalBody.innerHTML = `
+              <div class="no-bookings">
+                  <i data-lucide="calendar-x"></i>
+                  <p>No bookings found</p>
+                  <p class="subtitle">Start booking parking spots to see your history here.</p>
+              </div>
+          `;
+          lucide.createIcons();
+          return;
+      }
+      
+      const bookingsHTML = bookings.map(booking => {
+          const startDate = new Date(booking.start_time);
+          const endDate = new Date(booking.end_time);
+          const statusClass = booking.status.toLowerCase();
+          const statusIcon = {
+              'pending': 'clock',
+              'confirmed': 'check-circle',
+              'active': 'play-circle',
+              'completed': 'check-circle-2',
+              'cancelled': 'x-circle'
+          }[booking.status.toLowerCase()] || 'circle';
+          
+          return `
+              <div class="booking-card ${statusClass}">
+                  <div class="booking-header">
+                      <div class="booking-location">
+                          <i data-lucide="map-pin"></i>
+                          <h3>${booking.lot_name || 'Parking Lot'}</h3>
+                      </div>
+                      <div class="booking-status ${statusClass}">
+                          <i data-lucide="${statusIcon}"></i>
+                          <span>${booking.status}</span>
+                      </div>
+                  </div>
+                  <div class="booking-details">
+                      <div class="booking-detail-row">
+                          <div class="detail-item">
+                              <i data-lucide="car"></i>
+                              <span>Slot: ${booking.slot_number || 'N/A'}</span>
+                          </div>
+                          <div class="detail-item">
+                              <i data-lucide="truck"></i>
+                              <span>${booking.vehicle_type || 'N/A'}</span>
+                          </div>
+                      </div>
+                      <div class="booking-detail-row">
+                          <div class="detail-item">
+                              <i data-lucide="calendar"></i>
+                              <span>${startDate.toLocaleDateString()}</span>
+                          </div>
+                          <div class="detail-item">
+                              <i data-lucide="clock"></i>
+                              <span>${startDate.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} - ${endDate.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</span>
+                          </div>
+                      </div>
+                      <div class="booking-detail-row">
+                          <div class="detail-item">
+                              <i data-lucide="indian-rupee"></i>
+                              <span class="price">₹${parseFloat(booking.total_amount || booking.price || 0).toFixed(2)}</span>
+                          </div>
+                          <div class="detail-item booking-id">
+                              <span>#${booking.id}</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          `;
+      }).join('');
+      
+      modalBody.innerHTML = bookingsHTML;
+      lucide.createIcons();
+  }
+  
+  function closeBookingsModal() {
+      const modal = document.getElementById('bookingsModal');
+      modal.style.display = 'none';
+  }
+  
+  // Close modal when clicking outside
+  window.addEventListener('click', function(event) {
+      const modal = document.getElementById('bookingsModal');
+      if (event.target === modal) {
+          modal.style.display = 'none';
+      }
+  });
   
   function showSettings(e) {
       e.preventDefault();

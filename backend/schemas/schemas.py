@@ -49,6 +49,7 @@ class UserLogin(BaseModel):
 
 class UserResponse(UserBase):
     id: int
+    full_name: Optional[str] = None
     is_active: bool
     is_verified: bool
     created_at: datetime
@@ -156,6 +157,11 @@ class BookingResponse(BaseModel):
     vehicle_plate: Optional[str] = None
     check_in_time: Optional[datetime] = None
     check_out_time: Optional[datetime] = None
+    # Additional display fields
+    lot_name: Optional[str] = None
+    slot_number: Optional[str] = None
+    vehicle_type: Optional[str] = None
+    total_amount: Optional[float] = None
     
     class Config:
         from_attributes = True

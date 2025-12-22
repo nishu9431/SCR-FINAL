@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List
 import secrets
 import qrcode
@@ -38,7 +38,13 @@ async def create_booking(
     if booking_data.start_time >= booking_data.end_time:
         raise HTTPException(status_code=400, detail="End time must be after start time")
     
-    if booking_data.start_time < datetime.utcnow():
+    # Make start_time timezone-aware for comparison
+    now_utc = datetime.now(timezone.utc)
+    start_time_aware = booking_data.start_time
+    if start_time_aware.tzinfo is None:
+        start_time_aware = start_time_aware.replace(tzinfo=timezone.utc)
+    
+    if start_time_aware < now_utc:
         raise HTTPException(status_code=400, detail="Cannot book in the past")
     
     # Get vehicle type from booking data (default to "4wheeler" if not provided)

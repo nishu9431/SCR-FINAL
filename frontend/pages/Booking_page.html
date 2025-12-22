@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ParkPulse</title>
-    <link rel="stylesheet" href="../css/Booking_page.css?v=20251217e">
+    <link rel="stylesheet" href="../css/Booking_page.css?v=20251222e">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="../js/Booking_page.js?v=20251217e" defer></script>
+    <script src="../js/Booking_page.js?v=20251222e" defer></script>
 </head>
 <body>
 
@@ -36,7 +36,6 @@
                             <div class="profile-details">
                                 <div class="profile-name" id="profileName">Loading...</div>
                                 <div class="profile-email" id="profileEmail">Loading...</div>
-                                <div class="profile-phone" id="profilePhone">Loading...</div>
                             </div>
                         </div>
                         <div class="dropdown-divider"></div>
@@ -152,6 +151,24 @@
             </div>
         </section>
     </main>
+
+    <!-- Bookings Modal -->
+    <div id="bookingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>
+                    <i data-lucide="calendar"></i>
+                    My Booking History
+                </h2>
+                <button class="close-modal" onclick="closeBookingsModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="bookingsModalBody">
+                <div class="loading">Loading bookings...</div>
+            </div>
+        </div>
+    </div>
 
     <footer class="footer">
         <div class="container footer-container">

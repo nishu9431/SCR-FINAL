@@ -68,7 +68,7 @@ async def get_current_user(
     except JWTError:
         raise credentials_exception
     
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(User).filter(User.id == int(user_id)).first()
     if user is None:
         raise credentials_exception
     
@@ -93,6 +93,7 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
         email=user_data.email,
         hashed_password=hashed_password,
         name=user_data.name,
+        full_name=user_data.name,  # Set full_name same as name
         phone=user_data.phone,
         role=user_data.role
     )
@@ -102,7 +103,7 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
     
     # Create access token
-    access_token = create_access_token(data={"sub": new_user.id})
+    access_token = create_access_token(data={"sub": str(new_user.id)})
     
     return TokenResponse(
         access_token=access_token,
@@ -131,7 +132,7 @@ async def login(user_data: UserLogin, db: Session = Depends(get_db)):
         )
     
     # Create access token
-    access_token = create_access_token(data={"sub": user.id})
+    access_token = create_access_token(data={"sub": str(user.id)})
     
     return TokenResponse(
         access_token=access_token,

@@ -215,3 +215,51 @@ async def delete_lot(
     # Soft delete
     lot.is_active = False
     db.commit()
+
+
+@router.get("/{lot_id}/slots")
+async def get_lot_slots(
+    lot_id: int,
+    vehicle_type: Optional[str] = Query(None, description="Filter by vehicle type: 2wheeler, 4wheeler, others"),
+    db: Session = Depends(get_db)
+):
+    """Get slots for a parking lot, optionally filtered by vehicle type"""
+    from models.models import ParkingSlot
+    from sqlalchemy import and_
+    
+    lot = db.query(ParkingLot).filter(ParkingLot.id == lot_id).first()
+    if not lot:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Parking lot not found"
+        )
+    
+    # Build query
+    query = db.query(ParkingSlot).filter(
+        and_(
+            ParkingSlot.lot_id == lot_id,
+            ParkingSlot.is_active == True
+        )
+    )
+    
+    # Filter by vehicle type if provided
+    if vehicle_type:
+        if vehicle_type not in ["2wheeler", "4wheeler", "others"]:
+            raise HTTPException(status_code=400, detail="Invalid vehicle type")
+        query = query.filter(ParkingSlot.vehicle_type == vehicle_type)
+    
+    slots = query.all()
+    
+    # Return slot data
+    return [
+        {
+            "id": slot.id,
+            "slot_number": slot.slot_number,
+            "vehicle_type": slot.vehicle_type,
+            "status": (slot.status.value if hasattr(slot.status, 'value') else slot.status).upper(),
+            "floor": slot.floor,
+            "zone": slot.zone,
+            "is_active": slot.is_active
+        }
+        for slot in slots
+    ]

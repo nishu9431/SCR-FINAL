@@ -49,8 +49,44 @@ async def get_user_bookings(
     current_user: User = Depends(get_current_user)
 ):
     """Get all bookings for current user"""
+    from models.models import ParkingLot, ParkingSlot
+    
     bookings = db.query(Booking).filter(
         Booking.user_id == current_user.id
     ).order_by(Booking.created_at.desc()).all()
     
-    return bookings
+    # Enrich bookings with lot and slot details
+    enriched_bookings = []
+    for booking in bookings:
+        booking_dict = {
+            "id": booking.id,
+            "user_id": booking.user_id,
+            "lot_id": booking.lot_id,
+            "slot_id": booking.slot_id,
+            "start_time": booking.start_time,
+            "end_time": booking.end_time,
+            "status": booking.status,
+            "price": booking.price,
+            "created_at": booking.created_at,
+            "qr_token": booking.qr_token,
+            "vehicle_plate": booking.vehicle_plate,
+            "check_in_time": booking.check_in_time,
+            "check_out_time": booking.check_out_time,
+            "total_amount": booking.price  # price is the total amount
+        }
+        
+        # Get parking lot info
+        lot = db.query(ParkingLot).filter(ParkingLot.id == booking.lot_id).first()
+        if lot:
+            booking_dict["lot_name"] = lot.name
+        
+        # Get parking slot info
+        if booking.slot_id:
+            slot = db.query(ParkingSlot).filter(ParkingSlot.id == booking.slot_id).first()
+            if slot:
+                booking_dict["slot_number"] = slot.slot_number
+                booking_dict["vehicle_type"] = slot.vehicle_type.value if hasattr(slot.vehicle_type, 'value') else str(slot.vehicle_type)
+        
+        enriched_bookings.append(booking_dict)
+    
+    return enriched_bookings
