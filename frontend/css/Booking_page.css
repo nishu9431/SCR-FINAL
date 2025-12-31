@@ -888,6 +888,116 @@ body {
     font-family: monospace;
 }
 
+/* Booking Actions */
+.booking-actions {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.modify-booking-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modify-booking-btn i {
+    width: 18px;
+    height: 18px;
+}
+
+.modify-booking-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.modify-booking-btn:active {
+    transform: translateY(0);
+}
+
+.modify-booking-btn.disabled,
+.modify-booking-btn:disabled {
+    background: linear-gradient(135deg, #9CA3AF, #6B7280);
+    color: #D1D5DB;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.modify-booking-btn.disabled:hover,
+.modify-booking-btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.cancel-booking-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancel-booking-btn i {
+    width: 18px;
+    height: 18px;
+}
+
+.cancel-booking-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.cancel-booking-btn:active {
+    transform: translateY(0);
+}
+
+.cancel-booking-btn.disabled,
+.cancel-booking-btn:disabled {
+    background: linear-gradient(135deg, #9CA3AF, #6B7280);
+    color: #D1D5DB;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.cancel-booking-btn.disabled:hover,
+.cancel-booking-btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.cancellation-info {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #FEF3C7;
+    border-left: 3px solid #F59E0B;
+    border-radius: 4px;
+}
+
+.cancellation-info small {
+    color: #92400E;
+    font-size: 13px;
+    font-weight: 500;
+}
+
 @media (max-width: 768px) {
     .modal-content {
         margin: 20px;

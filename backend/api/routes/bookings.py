@@ -211,7 +211,42 @@ async def list_user_bookings(
 ):
     """List all bookings for current user"""
     bookings = db.query(Booking).filter(Booking.user_id == current_user.id).order_by(Booking.created_at.desc()).all()
-    return bookings
+    
+    # Enrich bookings with lot and slot information
+    enriched_bookings = []
+    for booking in bookings:
+        booking_dict = {
+            "id": booking.id,
+            "user_id": booking.user_id,
+            "lot_id": booking.lot_id,
+            "slot_id": booking.slot_id,
+            "start_time": booking.start_time,
+            "end_time": booking.end_time,
+            "status": booking.status,
+            "price": booking.price,
+            "created_at": booking.created_at,
+            "qr_token": booking.qr_token,
+            "vehicle_plate": booking.vehicle_plate,
+            "check_in_time": booking.check_in_time,
+            "check_out_time": booking.check_out_time,
+            "total_amount": booking.price,
+            "vehicle_type": booking.vehicle_type if hasattr(booking, 'vehicle_type') else None,
+        }
+        
+        # Get lot name
+        lot = db.query(ParkingLot).filter(ParkingLot.id == booking.lot_id).first()
+        if lot:
+            booking_dict["lot_name"] = lot.name
+        
+        # Get slot number
+        if booking.slot_id:
+            slot = db.query(ParkingSlot).filter(ParkingSlot.id == booking.slot_id).first()
+            if slot:
+                booking_dict["slot_number"] = slot.slot_number
+        
+        enriched_bookings.append(booking_dict)
+    
+    return enriched_bookings
 
 
 @router.get("/{booking_id}", response_model=BookingResponse)
@@ -338,7 +373,7 @@ async def cancel_booking(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Cancel a booking"""
+    """Cancel a booking with cancellation fee"""
     booking = db.query(Booking).filter(Booking.id == booking_id).first()
     
     if not booking:
@@ -350,9 +385,42 @@ async def cancel_booking(
     if booking.status in [BookingStatus.COMPLETED, BookingStatus.CANCELLED]:
         raise HTTPException(status_code=400, detail=f"Cannot cancel {booking.status} booking")
     
-    # Check cancellation policy (no refund if within 1 hour of start time)
-    if datetime.utcnow() > booking.start_time - timedelta(hours=1):
-        raise HTTPException(status_code=400, detail="Too late to cancel (within 1 hour of start time)")
+    # Calculate cancellation fee based on time remaining
+    now_utc = datetime.now(timezone.utc)
+    start_time_aware = booking.start_time
+    if start_time_aware.tzinfo is None:
+        start_time_aware = start_time_aware.replace(tzinfo=timezone.utc)
+    
+    time_until_start = start_time_aware - now_utc
+    hours_until_start = time_until_start.total_seconds() / 3600
+    
+    # Cancellation fee policy:
+    # - More than 48 hours: 10% deduction
+    # - 24-48 hours: 15% deduction
+    # - 12-24 hours: 20% deduction
+    # - 5-12 hours: 30% deduction
+    # - 1-5 hours: 50% deduction
+    # - Less than 1 hour: 75% deduction
+    
+    total_amount = booking.price
+    if hours_until_start >= 48:
+        cancellation_fee = total_amount * 0.10  # 10% deduction
+        refund_amount = total_amount * 0.90
+    elif hours_until_start >= 24:
+        cancellation_fee = total_amount * 0.15  # 15% deduction
+        refund_amount = total_amount * 0.85
+    elif hours_until_start >= 12:
+        cancellation_fee = total_amount * 0.20  # 20% deduction
+        refund_amount = total_amount * 0.80
+    elif hours_until_start >= 5:
+        cancellation_fee = total_amount * 0.30  # 30% deduction
+        refund_amount = total_amount * 0.70
+    elif hours_until_start >= 1:
+        cancellation_fee = total_amount * 0.50  # 50% deduction
+        refund_amount = total_amount * 0.50
+    else:  # Less than 1 hour
+        cancellation_fee = total_amount * 0.75  # 75% deduction
+        refund_amount = total_amount * 0.25
     
     booking.status = BookingStatus.CANCELLED
     
@@ -363,4 +431,10 @@ async def cancel_booking(
     
     db.commit()
     
-    return {"message": "Booking cancelled successfully"}
+    return {
+        "message": "Booking cancelled successfully",
+        "cancellation_fee": round(cancellation_fee, 2),
+        "refund_amount": round(refund_amount, 2),
+        "original_amount": total_amount,
+        "hours_until_start": round(hours_until_start, 2)
+    }

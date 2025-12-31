@@ -129,6 +129,17 @@
                     </ul>
                 </div>
 
+                <div class="cancellation-policy-card">
+                    <h3>Cancellation Policy</h3>
+                    <ul class="policy-list">
+                        <li><strong>More than 24 hours:</strong> 10% cancellation fee (90% refund)</li>
+                        <li><strong>12-24 hours:</strong> 25% cancellation fee (75% refund)</li>
+                        <li><strong>6-12 hours:</strong> 50% cancellation fee (50% refund)</li>
+                        <li><strong>1-6 hours:</strong> 75% cancellation fee (25% refund)</li>
+                        <li><strong>Less than 1 hour:</strong> No cancellation allowed</li>
+                    </ul>
+                </div>
+
                 <div class="action-buttons">
                     <button class="btn btn-primary" onclick="window.location.href='Booking_page.html'">
                         <i data-lucide="calendar-plus"></i>
@@ -137,6 +148,10 @@
                     <button class="btn btn-secondary" onclick="window.print()">
                         <i data-lucide="printer"></i>
                         Print Confirmation
+                    </button>
+                    <button class="btn btn-danger" onclick="cancelBooking()" id="cancelBtn">
+                        <i data-lucide="x-circle"></i>
+                        Cancel Booking
                     </button>
                 </div>
             </div>

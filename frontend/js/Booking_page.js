@@ -645,7 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       try {
-          const response = await fetch('http://localhost:8000/v1/users/bookings', {
+          const response = await fetch('http://localhost:8000/v1/bookings/', {
               method: 'GET',
               headers: {
                   'Authorization': `Bearer ${token}`,
@@ -668,6 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function displayBookings(bookings) {
       const modalBody = document.getElementById('bookingsModalBody');
       
+      console.log('displayBookings called with', bookings.length, 'bookings');
       if (!bookings || bookings.length === 0) {
           modalBody.innerHTML = `
               <div class="no-bookings">
@@ -683,6 +684,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const bookingsHTML = bookings.map(booking => {
           const startDate = new Date(booking.start_time);
           const endDate = new Date(booking.end_time);
+          const now = new Date();
           const statusClass = booking.status.toLowerCase();
           const statusIcon = {
               'pending': 'clock',
@@ -691,6 +693,35 @@ document.addEventListener('DOMContentLoaded', () => {
               'completed': 'check-circle-2',
               'cancelled': 'x-circle'
           }[booking.status.toLowerCase()] || 'circle';
+          
+          // Only allow cancellation for confirmed/pending bookings that haven't started yet
+          const hoursUntilStart = (startDate - now) / (1000 * 60 * 60);
+          const status = booking.status.toUpperCase();
+          
+          // Disable cancel for: completed, cancelled, active bookings, or past bookings
+          const canCancel = (status === 'CONFIRMED' || status === 'PENDING') && startDate > now;
+          
+          console.log(`Booking #${booking.id}: status=${status}, hoursUntilStart=${hoursUntilStart.toFixed(2)}, canCancel=${canCancel}`);
+          
+          // Calculate cancellation fee if applicable
+          let cancellationInfo = '';
+          if (canCancel) {
+              const totalAmount = parseFloat(booking.total_amount || booking.price || 0);
+              let feePercentage = 0;
+              if (hoursUntilStart >= 48) feePercentage = 10;
+              else if (hoursUntilStart >= 24) feePercentage = 15;
+              else if (hoursUntilStart >= 12) feePercentage = 20;
+              else if (hoursUntilStart >= 5) feePercentage = 30;
+              else if (hoursUntilStart >= 1) feePercentage = 50;
+              else feePercentage = 75;
+              
+              const refundAmount = totalAmount * (1 - feePercentage / 100);
+              cancellationInfo = `
+                  <div class="cancellation-info">
+                      <small>Cancel now: ${feePercentage}% fee • ₹${refundAmount.toFixed(2)} refund</small>
+                  </div>
+              `;
+          }
           
           return `
               <div class="booking-card ${statusClass}">
@@ -734,10 +765,29 @@ document.addEventListener('DOMContentLoaded', () => {
                               <span>#${booking.id}</span>
                           </div>
                       </div>
+                      ${cancellationInfo}
+                  </div>
+                  <div class="booking-actions">
+                      <button class="modify-booking-btn ${!canCancel ? 'disabled' : ''}" 
+                              ${!canCancel ? 'disabled' : ''} 
+                              onclick="${canCancel ? `modifyBookingFromHistory(${booking.id}, '${booking.start_time}', '${booking.end_time}', ${booking.lot_id})` : 'return false;'}">
+                          <i data-lucide="edit"></i>
+                          ${canCancel ? 'Modify Booking' : 'Cannot Modify'}
+                      </button>
+                      <button class="cancel-booking-btn ${!canCancel ? 'disabled' : ''}" 
+                              ${!canCancel ? 'disabled' : ''} 
+                              onclick="${canCancel ? `cancelBookingFromHistory(${booking.id}, ${parseFloat(booking.total_amount || booking.price || 0)}, '${booking.start_time}')` : 'return false;'}">
+                          <i data-lucide="x-circle"></i>
+                          ${canCancel ? 'Cancel Booking' : 'Cannot Cancel'}
+                      </button>
+                      </button>
                   </div>
               </div>
           `;
       }).join('');
+      
+      console.log('Generated HTML length:', bookingsHTML.length);
+      console.log('Cancel buttons in HTML:', (bookingsHTML.match(/cancel-booking-btn/g) || []).length);
       
       modalBody.innerHTML = bookingsHTML;
       lucide.createIcons();
@@ -747,6 +797,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const modal = document.getElementById('bookingsModal');
       modal.style.display = 'none';
   }
+  
+  // Make functions globally accessible
+  window.showBookings = showBookings;
+  window.closeBookingsModal = closeBookingsModal;
   
   // Close modal when clicking outside
   window.addEventListener('click', function(event) {
@@ -988,4 +1042,100 @@ document.addEventListener('DOMContentLoaded', () => {
           }, 1500);
       }
   }
+  
+  // Cancel booking from history modal
+  async function cancelBookingFromHistory(bookingId, totalAmount, startTime) {
+      const token = localStorage.getItem('access_token');
+      
+      if (!token) {
+          alert('Please login to cancel booking');
+          return;
+      }
+      
+      // Calculate cancellation fee
+      const now = new Date();
+      const start = new Date(startTime);
+      const hoursUntilStart = (start - now) / (1000 * 60 * 60);
+      
+      console.log('Cancel booking debug:', {
+          bookingId,
+          startTime,
+          now: now.toISOString(),
+          start: start.toISOString(),
+          hoursUntilStart: hoursUntilStart.toFixed(2)
+      });
+      
+      let feePercentage = 0;
+      let cancellationFee = 0;
+      let refundAmount = 0;
+      
+      // Calculate fee based on hours until start
+      if (hoursUntilStart >= 48) {
+          feePercentage = 10;  // 10% deduction
+      } else if (hoursUntilStart >= 24) {
+          feePercentage = 15;  // 15% deduction
+      } else if (hoursUntilStart >= 12) {
+          feePercentage = 20;  // 20% deduction
+      } else if (hoursUntilStart >= 5) {
+          feePercentage = 30;  // 30% deduction
+      } else if (hoursUntilStart >= 1) {
+          feePercentage = 50;  // 50% deduction
+      } else {
+          feePercentage = 75;  // 75% deduction - still allow cancellation
+      }
+      
+      cancellationFee = (totalAmount * feePercentage / 100).toFixed(2);
+      refundAmount = (totalAmount * (1 - feePercentage / 100)).toFixed(2);
+      
+      // Simple confirmation
+      if (!confirm(`Cancel this booking?\n\nYou will get ₹${refundAmount} refund (${feePercentage}% cancellation fee)`)) {
+          return;
+      }
+      
+      try {
+          const response = await fetch(`http://localhost:8000/v1/bookings/${bookingId}`, {
+              method: 'DELETE',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+              }
+          });
+          
+          if (response.ok) {
+              const result = await response.json();
+              alert(`✅ Booking cancelled!\n\nRefund: ₹${result.refund_amount}\nProcessing time: 5-7 business days`);
+              // Refresh the bookings list
+              fetchUserBookings();
+          } else {
+              const error = await response.json();
+              alert(`Failed to cancel: ${error.detail || 'Unknown error'}`);
+          }
+      } catch (error) {
+          console.error('Error cancelling booking:', error);
+          alert('Error cancelling booking. Please try again.');
+      }
+  }
+  
+  // Make function globally accessible
+  window.cancelBookingFromHistory = cancelBookingFromHistory;
+  
+  // Modify booking from history modal
+  async function modifyBookingFromHistory(bookingId, startTime, endTime, lotId) {
+      // Show confirmation
+      if (!confirm('Do you want to modify this booking?\n\nYou will be redirected to the booking page where you can select new time slots.')) {
+          return;
+      }
+      
+      // Store booking info for modification
+      localStorage.setItem('modify_booking_id', bookingId);
+      localStorage.setItem('modify_lot_id', lotId);
+      localStorage.setItem('modify_start_time', startTime);
+      localStorage.setItem('modify_end_time', endTime);
+      
+      // Redirect to slot selection page
+      alert('Modify feature coming soon!\n\nYou can cancel this booking and create a new one with different times.');
+  }
+  
+  // Make function globally accessible
+  window.modifyBookingFromHistory = modifyBookingFromHistory;
   
