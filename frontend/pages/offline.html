@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No Internet - ParkPulse</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .offline-container {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .offline-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #FF6B6B, #EE5A6F);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .offline-icon svg {
+            width: 50px;
+            height: 50px;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 20px rgba(255, 107, 107, 0);
+            }
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .offline-message {
+            font-size: 18px;
+            color: #64748b;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .offline-tips {
+            background: #f1f5f9;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .offline-tips h3 {
+            font-size: 16px;
+            color: #1e293b;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .offline-tips ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .offline-tips li {
+            padding: 8px 0;
+            color: #475569;
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .offline-tips li::before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .retry-button {
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .retry-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .retry-button:active {
+            transform: translateY(0);
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #fee2e2;
+            border-radius: 8px;
+            color: #991b1b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #dc2626;
+            border-radius: 50%;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @media (max-width: 600px) {
+            .offline-container {
+                padding: 40px 25px;
+            }
+            h1 {
+                font-size: 26px;
+            }
+            .offline-message {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">
+            <i data-lucide="wifi-off"></i>
+        </div>
+        
+        <h1>No Internet Connection</h1>
+        
+        <p class="offline-message">
+            Oops! It looks like you're not connected to the internet. 
+            Please check your connection and try again.
+        </p>
+
+        <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span>Offline</span>
+        </div>
+
+        <button class="retry-button" onclick="checkConnection()">
+            <i data-lucide="refresh-cw"></i>
+            Try Again
+        </button>
+
+        <div class="offline-tips">
+            <h3>
+                <i data-lucide="lightbulb"></i>
+                Quick Fixes:
+            </h3>
+            <ul>
+                <li>Check if your WiFi or mobile data is turned on</li>
+                <li>Try restarting your router or modem</li>
+                <li>Move closer to your WiFi router</li>
+                <li>Check if other devices can connect</li>
+                <li>Contact your internet service provider if the problem persists</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Check connection and reload if online
+        function checkConnection() {
+            if (navigator.onLine) {
+                // Try to fetch a small resource to verify actual connectivity
+                fetch('https://www.google.com/favicon.ico', { mode: 'no-cors' })
+                    .then(() => {
+                        window.history.back();
+                    })
+                    .catch(() => {
+                        alert('Still unable to connect. Please check your internet connection.');
+                    });
+            } else {
+                alert('No internet connection detected. Please check your network settings.');
+            }
+        }
+
+        // Auto-redirect when connection is restored
+        window.addEventListener('online', function() {
+            setTimeout(() => {
+                window.history.back();
+            }, 1000);
+        });
+
+        // Monitor connection status
+        setInterval(() => {
+            if (navigator.onLine) {
+                fetch('https://www.google.com/favicon.ico', { mode: 'no-cors' })
+                    .then(() => {
+                        window.history.back();
+                    })
+                    .catch(() => {});
+            }
+        }, 5000); // Check every 5 seconds
+    </script>
+</body>
+</html>
